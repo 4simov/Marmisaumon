@@ -29,6 +29,6 @@ class Router {
             include __DIR__ .'/Errors/404.php';
             //echo 'Error 404 : Tu es sur une page inexistante 0_0.';
             //throw new \Exception("No route found for URI: $uri");
-        }
+        } 
     }
 }
