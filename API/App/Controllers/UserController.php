@@ -2,18 +2,24 @@
 
 namespace Controllers;
 
+/**
+ * Gère les intéractions nécessaires avec la table de la BDD des utilisateurs de l'application
+ */
 class UserController extends Controller{
 
-    function getUserByEmail(){
-        echo "Get";
-    }
-
-    function setUser($input) {
-
-    }
-
-    function recoveryUser($input) {
+    /**
+     * 
+     * @param $requestBody => correspond au body/json que doit contenir la requête
+     */
+    function getUserByEmail($requestBody){
 
     }
 
+    function setUser($requestBody) {
+
+    }
+
+    function recoveryUser($requestBody) {
+
+    }
 }
