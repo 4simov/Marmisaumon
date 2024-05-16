@@ -39,14 +39,48 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          HeaderWidget(), 
-          
+          const HeaderWidget(), // Insérer le widget de l'en-tête
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/creation-recette');
+            },
+            child: const Text('Créer une recette'),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'Recettes populaires',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          // Ajouter ici la liste de recettes populaires ou catégories
+          Expanded(
+            child: ListView(
+              children: [
+                ListTile(
+                  title: const Text('Poulet rôti'),
+                  onTap: () {
+                    // Naviguer vers la page de détail de la recette
+                    Navigator.pushNamed(context, '/affichage-recette');
+                  },
+                ),
+                ListTile(
+                  title: const Text('Tarte aux pommes'),
+                  onTap: () {
+                    // Naviguer vers la page de détail de la recette
+                    Navigator.pushNamed(context, '/affichage-recette');
+                  },
+                ),
+                // Ajouter plus de recettes populaires ici...
+              ],
+            ),
+          ),
         ],
       ),
-    );  
+    );
   }
 }
 
