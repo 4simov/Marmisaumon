@@ -11,8 +11,10 @@ class UserController extends Controller{
      * 
      * @param $requestBody => correspond au body/json que doit contenir la requête
      */
-    function getUserByEmail($requestBody){
-
+    function getUserByEmail($requestBody = null){
+        if( $requestBody == null) {
+            throw new \Exception("Le requestBody est null");
+        }
     }
 
     function setUser($requestBody) {

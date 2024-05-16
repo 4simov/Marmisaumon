@@ -8,8 +8,11 @@ use System\DatabaseConnector;
  * Classe mère dont hériteront tous les controlleurs de l'application
  */
 class Controller {
-    public $db;
+    protected $db;
     public function __construct() {
         $this->db = new DatabaseConnector();
+    }
+    public function getDB() {
+        return $this->db;
     }
 }

@@ -4,7 +4,7 @@ namespace System;
 use PDO;
 
 class DatabaseConnector {
-    public $pdo;
+    protected $pdo;
 
     public function __construct() {
         try {
@@ -14,5 +14,8 @@ class DatabaseConnector {
         catch (PDOException $e) {
             echo $e->getMessage();
         }
+    }
+    public function getPDO() {
+        return $this->pdo;
     }
 }
