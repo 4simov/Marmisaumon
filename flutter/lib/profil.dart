@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'header.dart'; // Importez votre widget Header ici
+import 'header.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -26,7 +26,7 @@ class ProfilePage extends StatelessWidget {
                 children: [
                   const CircleAvatar(
                     radius: 60.0,
-                    backgroundImage: AssetImage('assets/profile_image.jpg'), // Remplacez par votre image de profil
+                    //backgroundImage: AssetImage('assets/profile_image.jpg'), // Remplacez par votre image de profil
                   ),
                   const SizedBox(height: 20.0),
                   const Text(
