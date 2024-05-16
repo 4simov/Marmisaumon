@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+// ignore: unnecessary_import
+import 'package:flutter/rendering.dart';
 
-class HeaderWidget extends StatelessWidget {
+class HeaderWidget extends StatefulWidget {
   const HeaderWidget({super.key});
-  
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _HeaderWidgetState createState() => _HeaderWidgetState();
+}
+
+class _HeaderWidgetState extends State<HeaderWidget> {
+  String _hoveredItem = '';
 
   @override
   Widget build(BuildContext context) {
@@ -39,15 +48,27 @@ class HeaderWidget extends StatelessWidget {
   Widget _buildMenuItem(BuildContext context, String title, String route) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: InkWell(
-        onTap: () {
-          Navigator.pushNamed(context, route);
+      child: MouseRegion(
+        onEnter: (_) {
+          setState(() {
+            _hoveredItem = title;
+          });
         },
-        child: Text(
-          title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
+        onExit: (_) {
+          setState(() {
+            _hoveredItem = '';
+          });
+        },
+        child: InkWell(
+          onTap: () {
+            Navigator.pushNamed(context, route);
+          },
+          child: Text(
+            title,
+            style: TextStyle(
+              color: _hoveredItem == title ? Colors.blueAccent : Colors.white,
+              fontSize: 16.0,
+            ),
           ),
         ),
       ),
