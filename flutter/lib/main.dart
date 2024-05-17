@@ -5,6 +5,7 @@ import 'creation.dart';
 import 'profil.dart';
 import 'contact.dart';
 import 'connexion.dart';
+import 'affichageRecette.dart';
 import 'inscription.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => HomePage(), // Page d'accueil
         '/creation-recette': (context) =>
             const RecipePage(), // Page de recette //Marche pas
-        // '/affichage-recette': (context) => const RecipePage(), // Page de creation de recette
+        '/affichage-recette': (context) =>  RecipeListPage(), // Page de creation de recette
         '/profil': (context) => const ProfilePage(), // Page de profil //Marche
         '/contact': (context) =>
             const ContactPage(), // Page de contact //Marche

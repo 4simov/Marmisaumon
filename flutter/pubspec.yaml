@@ -66,6 +66,8 @@ flutter:
     - assets/images/Recette1.jpg
     - assets/images/Recette2.jpg
     - assets/images/Recette3.jpg
+    - assets/images/tarte_aux_pommes.jpg
+    - assets/images/poulet_roti.jpg
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
