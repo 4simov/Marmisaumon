@@ -18,22 +18,36 @@ class Router {
         $this->routes[$route] = ['controller' => $controller, 'action' => $action];
     }
 
-    public function dispatch($uri) {
+    public function dispatch($uri, $response) {
         if (array_key_exists($uri, $this->routes)) {
             $controller = $this->routes[$uri]['controller'];
             $action = $this->routes[$uri]['action'];
 
-            $controller = new $controller();
+            
             $requestBody = file_get_contents('php://input');
+            $dataJSON = json_decode($requestBody);
+            // Output data from JSON data
+            if(is_object($dataJSON)){
+                print_r( $dataJSON->mail);
+            }else{
+                print("The given variable is not an object");
+            }
 
-            if($requestBody != null) {
-                $controller->$action($requestBody);
+            $controller = new $controller($requestBody);
+
+            if($controller->getToken() == true) {
+                if($requestBody != null) {
+                    $reponse = $controller->$action($dataJSON);
+                }
+                else {
+                    $reponse = $controller->$action();
+                }
+            } else {
+                include __DIR__ .'/Errors/404.php';
+                $reponse;
             }
-            else {
-                $controller->$action();
-            }
-        } else {
-            include __DIR__ .'/Errors/404.php';
+
+            return $response;
         }
     }
 }
