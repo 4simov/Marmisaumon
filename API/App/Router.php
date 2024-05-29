@@ -18,36 +18,35 @@ class Router {
         $this->routes[$route] = ['controller' => $controller, 'action' => $action];
     }
 
-    public function dispatch($uri, $response) {
-        if (array_key_exists($uri, $this->routes)) {
-            $controller = $this->routes[$uri]['controller'];
-            $action = $this->routes[$uri]['action'];
+    /**
+     * Traduit l'url de façon à utiliser le bon endpoint à travers les controllers
+     */
+    public function dispatch($uri) {
+        if (array_key_exists($_SERVER['REQUEST_METHOD'] . $uri, $this->routes)) {
+            //on récupère l'intitulé de la classe que l'on veut utiliser
+            $controller = $this->routes[$_SERVER['REQUEST_METHOD'] .$uri]['controller'];
+            //on récupère l'intitulé de la function de la classe
+            $action = $this->routes[$_SERVER['REQUEST_METHOD'] .$uri]['action'];
 
-            
+            //on récupère le body de la requête du client
             $requestBody = file_get_contents('php://input');
             $dataJSON = json_decode($requestBody);
-            // Output data from JSON data
-            if(is_object($dataJSON)){
-                print_r( $dataJSON->mail);
-            }else{
-                print("The given variable is not an object");
-            }
 
             $controller = new $controller($requestBody);
 
             if($controller->getToken() == true) {
+                //on vérifie si la requête n'a pas de données dans le body pour le rediriger en paramètre de la fonction utilisé par la classe
                 if($requestBody != null) {
-                    $reponse = $controller->$action($dataJSON);
+                    $reponse = $controller->$action($dataJSON);//Exemple de résultat : UserController->getUserByEmail($dataJSON)
                 }
                 else {
-                    $reponse = $controller->$action();
+                    $reponse = $controller->$action();//Exemple de résultat : UserController->getAllUsers()
                 }
-            } else {
-                include __DIR__ .'/Errors/404.php';
-                $reponse;
             }
-
-            return $response;
+        }
+        //Aucune route correspondant à l'url n'a été trouvé
+        else {
+            include __DIR__ .'/Errors/404.php';
         }
     }
 }

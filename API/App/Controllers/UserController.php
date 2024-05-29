@@ -10,27 +10,33 @@ class UserController extends Controller{
 
     /**
      * 
-     * @param $requestBody => correspond au body/json que doit contenir la requête
+     * @param $dataJSON => correspond au body/json que doit contenir la requête
+     * $request->{nomDeLaVariableVoulue} => renvoie la donnée souhaité
      */
-    function getUserByEmail($requestBody = null){
-        if( $requestBody == null) {
+    function getUserByEmail($dataJSON = null){
+        if( $dataJSON == null) {
             throw new \Exception("Le requestBody est null");
         }
         else {
-            var_dump($requestBody);
+            //Debug
+            echo "#Request data";
+            var_dump($dataJSON);
+
             $query = "SELECT * FROM utilisateurs WHERE login = :login AND pass = :pass";
             $check = $this->getDB()->getPDO()->prepare($query);
             $check->setFetchMode(PDO::FETCH_ASSOC);
-            $check->execute(['login' => $requestBody->{"mail"},
-                            'pass' => $requestBody->{"password"}]);
+            $check->execute(['login' => $dataJSON->{"mail"},
+                            'pass' => $dataJSON->{"password"}]);
+
             if($check->rowCount() == 0) {
-                $erreur= "aucun compte correspondant au login";
+                $erreur= "#Réponse <br> mauvais login ou mot de passe";
                 echo $erreur;
             }
             else {
                 echo 'CONNECTE';
                 $data = [ 'token' => 'monToken'];
-                header('Content-type: application/json');
+                //Réponse=>renvoyer un nouveau token au client et l'inscrit dans la BDD ( dans les cookies ? )
+                echo "->Réponse du serveur";
                 var_dump( $data );
             }
         }
@@ -41,14 +47,13 @@ class UserController extends Controller{
             throw new \Exception("Le requestBody est null");
         }
         else {
-            var_dump($requestBody);
             $pdo = $this->getDB()->getPDO();
             $query = "SELECT * FROM utilisateurs WHERE login = :login";
             $check = $pdo->prepare($query);
             $check->setFetchMode(PDO::FETCH_ASSOC);
             $check->execute(['login' => $requestBody->{"mail"}]);
             if($check->rowCount() > 0) {
-                $erreur= "mail déjà existant";
+                $erreur= "-x>mail déjà existant";
                 echo $erreur;
             }
             else {
@@ -59,6 +64,7 @@ class UserController extends Controller{
                     $requestBody->{"mail"},
                     $requestBody->{"password"},
                 ));
+                echo "->compte créé";
             }
         }
     }

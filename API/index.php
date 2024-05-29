@@ -19,4 +19,4 @@ $response = new Response();
 //$response = $right::rightChecker($request, $router->dispatch($request->getUri()->getPath(), $response));
 
 //var_dump($request->getUri()->getPath());
-$router->dispatch($request->getUri()->getPath(), $request);
+$router->dispatch($request->getUri()->getPath());

@@ -16,7 +16,6 @@ class Controller {
 
     public function __construct($request) {
         echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA    <br>";
-        echo header("Access-Control-Allow-Origin: *") . "<br>";
         //$right = new MiddlewareHome\Right();
         $this->db = new DatabaseConnector();
         /*if($right::rightChecker($request ,$this->db->getPDO(), new Response())== null) {
@@ -24,6 +23,7 @@ class Controller {
         }else {
             $this->isValideToken = true;
         };*/
+        echo "#Request controller parameter : json_decode($request)";
         var_dump($request);
     }
     
