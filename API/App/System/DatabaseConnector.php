@@ -29,6 +29,6 @@ class DatabaseConnector {
      * Génère les tables manquantes sur la BDD
      */
     public function InitDatabase() {
-
+        
     }
 }

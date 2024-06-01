@@ -1,10 +1,11 @@
 <?php
 namespace MyEnum{
 
-enum VisiteursEnum
+enum RolesEnum
 {
     case INVITE;
     case UTILISATEUR;
+    case ADMIN;
 }
 
 }
