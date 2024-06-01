@@ -1,12 +1,14 @@
 <?php
-use App;
-use Controllers;
+use App\Router;
+use Controllers\UserController;
 
-$router = new App\Router();
+// Crée une instance du routeur
+$router = new Router();
 
-$router->addRoute('POST', '/login', Controllers\UserController::class, 'getUserByEmail');
-$router->addRoute('POST', '/inscription', Controllers\UserController::class, 'getInscription');
-$router->addRoute('GET', '/readUser', Controllers\UserController::class, 'readUser');
-$router->addRoute('PUT', '/updateUser', Controllers\UserController::class, 'updateUser');
-$router->addRoute('PUT', '/updatePassword', Controllers\UserController::class, 'updatePassword');
-$router->addRoute('DELETE', '/deleteUser', Controllers\UserController::class, 'deleteUser');
+// Ajoutez les routes avec les méthodes HTTP appropriées
+$router->addRoute('POST', '/login', UserController::class, 'getUserByEmail');
+$router->addRoute('POST', '/inscription', UserController::class, 'getInscription');
+$router->addRoute('GET', '/readUser', UserController::class, 'readUser');
+$router->addRoute('PUT', '/updateUser', UserController::class, 'updateUser');
+$router->addRoute('PUT', '/updatePassword', UserController::class, 'updatePassword');
+$router->addRoute('DELETE', '/deleteUser', UserController::class, 'deleteUser');
