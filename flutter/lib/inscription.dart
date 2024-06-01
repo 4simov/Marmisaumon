@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'header.dart';
 
-//Création de la classe pour le formulaire
 class Inscription extends StatefulWidget {
   @override
   _MyFormState createState() => _MyFormState();
@@ -10,25 +11,55 @@ class Inscription extends StatefulWidget {
 class _MyFormState extends State<Inscription> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-//Pour récupérer l'informations
   TextEditingController emailController = TextEditingController();
   TextEditingController confirmEmailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
 
-  void _submitForm() {
-    //Vérifie si le formulaire est valide
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save(); //Enregistre les données du formulaire
+      _formKey.currentState!.save();
+
+      var payload = {
+        'name': nameController.text,
+        'email': emailController.text,
+        'password': passwordController.text,
+        'confirm_password': confirmPasswordController.text,
+      };
+
+      try {
+        print('Sending request to API...');
+        var response = await http.post(
+          Uri.http('http://localhost:8080', '/inscription'), // URL correcte
+          body: json.encode(payload),
+          headers: {"Content-Type": "application/json"},
+        );
+
+        print('Response received. Status code: ${response.statusCode}');
+        if (response.statusCode == 200) {
+          var responseData = json.decode(response.body);
+          print('Response data: $responseData');
+          if (responseData['success']) {
+            print('Inscription réussie');
+          } else {
+            print('Erreur: ${responseData['message']}');
+          }
+        } else {
+          print('Erreur de connexion: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Exception: $e');
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(     
+    return Scaffold(
       body: SingleChildScrollView(
         child: Form(
-          key: _formKey, // Associe la clé au formulaire
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -42,6 +73,20 @@ class _MyFormState extends State<Inscription> {
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: <Widget>[
+                      TextFormField(
+                        controller: nameController,
+                        decoration: const InputDecoration(
+                          labelText: 'Nom',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Veuillez entrer votre nom';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20.0),
                       TextFormField(
                         keyboardType: TextInputType.emailAddress,
                         controller: emailController,
@@ -73,19 +118,6 @@ class _MyFormState extends State<Inscription> {
                         validator: (value) {
                           if (value != emailController.text) {
                             return 'Les adresses e-mail ne sont pas identiques';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 20.0),
-                      TextFormField(
-                        decoration: const InputDecoration(
-                          labelText: 'Pseudo',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return 'Veuillez entrer votre pseudo';
                           }
                           return null;
                         },
