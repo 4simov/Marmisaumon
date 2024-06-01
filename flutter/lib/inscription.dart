@@ -31,7 +31,7 @@ class _MyFormState extends State<Inscription> {
       try {
         print('Sending request to API...');
         var response = await http.post(
-          Uri.http('http://localhost:8080', '/inscription'), // URL correcte
+          Uri.http('127.0.0.1:8080', '/inscription'), 
           body: json.encode(payload),
           headers: {"Content-Type": "application/json"},
         );
