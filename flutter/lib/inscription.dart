@@ -1,129 +1,178 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'header.dart';
 
-//Création de la classe pour le formulaire
 class Inscription extends StatefulWidget {
   @override
   _MyFormState createState() => _MyFormState();
 }
 
 class _MyFormState extends State<Inscription> {
-  final GlobalKey<FormState> _formKey =
-      GlobalKey<FormState>(); // la clé pour gérer le formulaire
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  //     //Pour récupérer l'information
   TextEditingController emailController = TextEditingController();
   TextEditingController confirmEmailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPasswordController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
 
-  void _submitForm() {
-    // Vérifie si le formulaire est valide
+ late var personName = 'John Doe';
+  
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save(); // Enregistres les données du formulaire
+      _formKey.currentState!.save();
+
+      var payload = {
+        'name': nameController.text,
+        'email': emailController.text,
+        'password': passwordController.text,
+        'confirm_password': confirmPasswordController.text,
+      };
+
+      try {
+        print('Sending request to API...');
+        var response = await http.post(
+          Uri.http('localhost:8080','utilisateur'), // URL correcte
+          body: json.encode(payload),
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            'Content-Type': 'application/json',
+            'Accept': '*/*'
+          }
+        );
+
+        print('Response received. Status code: ${response.statusCode}');
+        if (response.statusCode == 200) {
+          print(' AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+          print(response.body);
+          print(' BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB');
+          //var temp = json.decode(response.body);
+          var Json = json.decode(response.body)['name'];
+          //personName = Json;
+          setState(() {
+            personName = Json;
+          });
+        } else {
+          print('Erreur de connexion: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Exception: $e');
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // appBar: AppBar(
-        //   title: const Text('Inscription'),
-        //   leading: IconButton(
-        //     onPressed: () {
-        //       Navigator.of(context).pop();
-        //     },
-        //     icon: const BackButtonIcon(),
-        //   ),
-        // ),
-        body: Form(
-      //Header
-
-      key: _formKey, // Associe la clé au formulaire
-
-      child: Column(
-        children: <Widget>[
-          HeaderWidget(),
-          TextFormField(
-            keyboardType: TextInputType.emailAddress,
-            controller: emailController,
-            decoration: const InputDecoration(
-              labelText: 'Adresse e-mail',
-            ),
-            validator: (value) {
-              bool emailRegex = RegExp(
-                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                  .hasMatch(value!);
-              if (value.isEmpty) {
-                return "Entrez votre adresse e-mail";
-              }
-
-              if (!emailRegex) {
-                return "Veuillez entrer une adresse e-mail valide";
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 20.0),
-          TextFormField(
-            controller: confirmEmailController,
-            decoration: const InputDecoration(
-              labelText: 'Confirmer votre adresse e-mail',
-            ),
-            keyboardType: TextInputType.emailAddress,
-            validator: (value) {
-              if (value != emailController.text) {
-                return 'Les adresses e-mail ne sont pas identiques';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 20.0),
-          TextFormField(
-            decoration: const InputDecoration(
-              labelText: 'Pseudo',
-            ),
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Veuillez entrer votre pseudo';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 20.0),
-          TextFormField(
-            controller: passwordController,
-            decoration: const InputDecoration(
-              labelText: 'Mot de passe',
-            ),
-            obscureText: true,
-            validator: (value) {
-              if (value!.isEmpty) {
-                return 'Veuillez entrer votre mot de passe';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 20.0),
-          TextFormField(
-              controller: confirmPasswordController,
-              decoration: const InputDecoration(
-                labelText: 'Confirmer votre mot de passe',
+      body: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              const HeaderWidget(),
+              Card(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        controller: nameController,
+                        decoration: InputDecoration(
+                          labelText: personName,
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Veuillez entrer votre nom';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20.0),
+                      TextFormField(
+                        keyboardType: TextInputType.emailAddress,
+                        controller: emailController,
+                        decoration: const InputDecoration(
+                          labelText: 'Adresse e-mail',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) {
+                          bool emailRegex = RegExp(
+                                  r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                              .hasMatch(value!);
+                          if (value.isEmpty) {
+                            return "Entrez votre adresse e-mail";
+                          }
+                          if (!emailRegex) {
+                            return "Veuillez entrer une adresse e-mail valide";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20.0),
+                      TextFormField(
+                        controller: confirmEmailController,
+                        decoration: const InputDecoration(
+                          labelText: 'Confirmer votre adresse e-mail',
+                          border: OutlineInputBorder(),
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          if (value != emailController.text) {
+                            return 'Les adresses e-mail ne sont pas identiques';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20.0),
+                      TextFormField(
+                        controller: passwordController,
+                        decoration: const InputDecoration(
+                          labelText: 'Mot de passe',
+                          border: OutlineInputBorder(),
+                        ),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Veuillez entrer votre mot de passe';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20.0),
+                      TextFormField(
+                        controller: confirmPasswordController,
+                        decoration: const InputDecoration(
+                          labelText: 'Confirmer votre mot de passe',
+                          border: OutlineInputBorder(),
+                        ),
+                        obscureText: true,
+                        validator: (value) {
+                          if (value != passwordController.text) {
+                            return 'Les mots de passe ne sont pas identiques';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20.0),
+                      ElevatedButton(
+                        onPressed: _submitForm,
+                        child: const Text('S\'inscrire'),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              obscureText: true,
-              validator: (value) {
-                if (value != passwordController.text) {
-                  return 'Les mots de passe ne sont pas identiques';
-                }
-                return null;
-              }),
-          const SizedBox(height: 20.0),
-          ElevatedButton(
-            onPressed: _submitForm,
-            child: const Text('S\'inscrire'), // Bouton pour s'inscrire
+            ],
           ),
-        ],
+        ),
       ),
-    ));
+    );
   }
 }

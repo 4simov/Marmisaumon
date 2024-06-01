@@ -18,14 +18,10 @@ class UserController extends Controller{
             throw new \Exception("Le requestBody est null");
         }
         else {
-            //Debug
-            echo "#Request data";
-            var_dump($dataJSON);
-
             $query = "SELECT * FROM utilisateurs WHERE login = :login AND pass = :pass";
             $check = $this->getDB()->getPDO()->prepare($query);
             $check->setFetchMode(PDO::FETCH_ASSOC);
-            $check->execute(['login' => $dataJSON->{"mail"},
+            $check->execute(['login' => $dataJSON->{"email"},
                             'pass' => $dataJSON->{"password"}]);
 
             if($check->rowCount() == 0) {
@@ -33,11 +29,16 @@ class UserController extends Controller{
                 echo $erreur;
             }
             else {
-                echo 'CONNECTE';
-                $data = [ 'token' => 'monToken'];
+                $token = $this->generateGuid();
+                $data = [ 'token' => $token];
+                //stockage dans la base du nouveau token
+                $sql = "UPDATE utilisateurs SET token = :token WHERE login = :login";
+                $stmt =  $this->getDB()->getPDO()->prepare($sql);
+                $stmt->execute(['token' => $token, 'login' => $dataJSON->{"email"}]);
+
+                header('Content-type: application/json');
+                echo json_encode( $data );
                 //Réponse=>renvoyer un nouveau token au client et l'inscrit dans la BDD ( dans les cookies ? )
-                echo "->Réponse du serveur";
-                var_dump( $data );
             }
         }
     }
@@ -73,4 +74,27 @@ class UserController extends Controller{
 
     }
 
+    function generateGuid() {
+        if (function_exists('openssl_random_pseudo_bytes') === true) {
+            $data = openssl_random_pseudo_bytes(16);
+            assert(strlen($data) == 16);
+    
+            $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // Version 4
+            $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // Variant
+    
+            return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
+        } else {
+            mt_srand((double)microtime() * 10000);
+            $charid = strtolower(md5(uniqid(rand(), true)));
+            $hyphen = chr(45); // "-"
+    
+            $uuid = substr($charid,  0, 8) . $hyphen
+                  . substr($charid,  8, 4) . $hyphen
+                  . substr($charid, 12, 4) . $hyphen
+                  . substr($charid, 16, 4) . $hyphen
+                  . substr($charid, 20, 12);
+                  
+            return $uuid;
+        }
+    }
 }

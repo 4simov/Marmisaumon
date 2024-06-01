@@ -46,7 +46,7 @@ class Router {
         }
         //Aucune route correspondant à l'url n'a été trouvé
         else {
-            include __DIR__ .'/Errors/404.php';
+            //include __DIR__ .'/Errors/404.php';
         }
     }
 }

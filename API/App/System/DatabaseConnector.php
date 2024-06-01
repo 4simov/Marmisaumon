@@ -15,7 +15,6 @@ class DatabaseConnector {
     public function __construct() {
         try {
             $this->pdo = new PDO("mysql:host=localhost;dbname=marmiton", "root", "");
-            echo'Connexion établie<br>';
         }
         catch (PDOException $e) {
             echo $e->getMessage();
