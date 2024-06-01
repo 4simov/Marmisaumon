@@ -25,7 +25,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => HomePage(), // Page d'accueil
         '/creation-recette': (context) =>
             const RecipePage(), // Page de recette //Marche pas
-        '/affichage-recette': (context) =>  RecipeListPage(), // Page de creation de recette
+        '/affichage-recette': (context) =>
+            RecipeListPage(), // Page de creation de recette
         '/profil': (context) => const ProfilePage(), // Page de profil //Marche
         '/contact': (context) =>
             const ContactPage(), // Page de contact //Marche
