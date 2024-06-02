@@ -12,7 +12,6 @@ use PDO;
 */
 class Right {
     static function rightChecker( $request, $pdo, $next) {
-        echo "xwdfgsdfhsfghsgswthqt";
         var_dump($request);
         //Converti en un format plus simple à manipuler, le json
         $dataJSON = json_decode($request);
