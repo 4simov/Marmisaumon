@@ -5,35 +5,29 @@ namespace MiddlewareHome;
 use GuzzleHttp\Psr7\ServerRequest;
 use GuzzleHttp\Psr7\Response;
 use MyEnum;
+use MyEnum\RolesEnum;
 use PDO;
 
 /*
     Quand le token n'est plus valide renvoie null, à rediriger vers une page de connexion
 */
 class Right {
-    static function rightChecker( $request, $pdo, $next) {
-        var_dump($request);
-        //Converti en un format plus simple à manipuler, le json
-        $dataJSON = json_decode($request);
-        echo $dataJSON->mail;
-
-        //Récupération du token dans la bdd pour comparer celle du client
-        var_dump($dataJSON);
-        $query = "SELECT * FROM utilisateurs WHERE login = :login AND token = :token LIMIT 1";
+    static function rightChecker( $pdo, $right) {
+        //On récupère l'entrée du token dans le header de la requête
+        $token = $all_headers = getallheaders()['Authorization'];
+        $query = "SELECT * FROM utilisateur WHERE Token = :token LIMIT 1";
         $check = $pdo->prepare($query);
-        $check->execute(['login' => $dataJSON->mail, 'token' => $dataJSON->token]);
+        $check->execute(['token' => $token]);
         $user = $check->fetchAll();
-        var_dump($user);
+        //récupération de l'utilisateur
         foreach($user as $u) {
-            if( $dataJSON->token == $u["token"] ) {
-                header("Authorization: Bearer " .$u["token"]);
-                echo "vous avez trouvé le token ! ";
-                var_dump(VisiteursEnum::INVITE);
-                $enum = MyEnum\VisiteursEnum->UTILISATEUR;
-                return $enum;
-                return $request;
+            if( $right->value <= $u["IdRole"]) {
+                return true;
+            }
+            else{
+                return false;
             }
         }
-        return null;
+        return false;
     }
 }

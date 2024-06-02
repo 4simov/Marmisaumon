@@ -1,21 +1,21 @@
 <?php
 
 namespace Controllers;
+use MiddlewareHome\Right;
 use PDO;
 use System\DatabaseConnector;
 
 /**
  * Gère les interactions nécessaires avec la table de la BDD des utilisateurs de l'application
  */
-class UserController {
+class UserController extends Controller {
     private $conn;
     private $table_name = "utilisateur";
 
-    public function __construct() {
-        $database = new DatabaseConnector();
-        $this->conn = $database->getPDO();
+    public function __construct($request, $roleMinimun) {
+        parent::__construct($request, $roleMinimun);
+        $this->conn = $this->getDB()->getPDO();
     }
-
     /**
      * 
      * @param $dataJSON => correspond au body/json que doit contenir la requête
@@ -54,9 +54,8 @@ class UserController {
     /* Inscription d'un utilisateur
      * @param $requestBody => correspond au body/json que doit contenir la requête
      */
-    public function getInscription($dataJSON) {  
-        var_dump($dataJSON);
-        if ($dataJSON->{"email"} != null && isset($dataJSON->{"email"}) && isset($dataJSON->{"password"})) {
+    public function getInscription($dataJSON) {
+        if ($dataJSON->token != null && isset($dataJSON->{"email"}) && isset($dataJSON->{"password"})) {
             // Vérifie si l'email existe déjà
             $query = "SELECT COUNT(*) as count FROM " . $this->table_name . " WHERE Mail = :Mail";
             $stmt = $this->conn->prepare($query);

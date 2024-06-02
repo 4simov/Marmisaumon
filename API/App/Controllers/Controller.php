@@ -1,6 +1,8 @@
 <?php
 
 namespace Controllers;
+use MyEnum\RolesEnum;
+use MiddlewareHome\Right;
 use System;
 use System\DatabaseConnector;
 use GuzzleHttp\Psr7\Response;
@@ -11,24 +13,21 @@ use MiddlewareHome;
  */
 class Controller {
     protected $db;
-    protected $isValideToken = true;
-    protected $right;
+    protected $isValideToken = false;
+    protected $rightChecker;
 
-    public function __construct($request) {
+    public function __construct($request, $roleMinimun) {
         //$right = new MiddlewareHome\Right();
+        $this->rightChecker = new Right();
         $this->db = new DatabaseConnector();
-        /*if($right::rightChecker($request ,$this->db->getPDO(), new Response())== null) {
-            $this->isValideToken = false;
-        }else {
-            $this->isValideToken = true;
-        };*/
+        $this->isValideToken = $this->rightChecker::rightChecker($this->getDB()->getPDO(), $roleMinimun);
     }
     
     public function getDB() {
         return $this->db;
     }
 
-    public function getToken() {
+    public function isRigth() {
         return $this->isValideToken;
     }
 }
