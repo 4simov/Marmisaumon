@@ -31,18 +31,10 @@ class Router {
             //on récupère le body de la requête du client
             $requestBody = file_get_contents('php://input');
             $dataJSON = json_decode($requestBody);
-
             $controller = new $controller($requestBody);
-
-            if($controller->getToken() == true) {
-                //on vérifie si la requête n'a pas de données dans le body pour le rediriger en paramètre de la fonction utilisé par la classe
-                if($requestBody != null) {
-                    $reponse = $controller->$action($dataJSON);//Exemple de résultat : UserController->getUserByEmail($dataJSON)
-                }
-                else {
-                    $reponse = $controller->$action();//Exemple de résultat : UserController->getAllUsers()
-                }
-            }
+            //print_r($dataJSON);
+            var_dump($dataJSON);
+            $reponse = $controller->$action($dataJSON);//Exemple de résultat : UserController->getUserByEmail($dataJSON)
         }
         //Aucune route correspondant à l'url n'a été trouvé
         else {

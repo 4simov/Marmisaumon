@@ -2,9 +2,7 @@
 
 namespace Controllers;
 use PDO;
-
 use System\DatabaseConnector;
-use PDO;
 
 /**
  * Gère les interactions nécessaires avec la table de la BDD des utilisateurs de l'application
@@ -56,10 +54,9 @@ class UserController {
     /* Inscription d'un utilisateur
      * @param $requestBody => correspond au body/json que doit contenir la requête
      */
-    public function getInscription($requestBody) {
-        $data = json_decode($requestBody, true);
-
-        if (isset($data['Pseudo']) && isset($data['Mail']) && isset($data['Password']) && isset($data['IdRole'])) {
+    public function getInscription($dataJSON) {  
+        var_dump($dataJSON);
+        if ($dataJSON->{"email"} != null && isset($dataJSON->{"email"}) && isset($dataJSON->{"password"})) {
             // Vérifie si l'email existe déjà
             $query = "SELECT COUNT(*) as count FROM " . $this->table_name . " WHERE Mail = :Mail";
             $stmt = $this->conn->prepare($query);
@@ -77,13 +74,14 @@ class UserController {
             $stmt = $this->conn->prepare($query);
 
             // Hashage du mot de passe avant l'enregistrement
-            $password_hash = password_hash($data['Password'], PASSWORD_BCRYPT);
+            $password_hash = password_hash($dataJSON->{'password'}, PASSWORD_BCRYPT);
 
+            $role = 1;
             // Bind des valeurs
-            $stmt->bindParam(":Mail", $data['Mail']);
+            $stmt->bindParam(":Mail", $dataJSON->{'email'});
             $stmt->bindParam(":Password", $password_hash);
-            $stmt->bindParam(":Pseudo", $data['Pseudo']);
-            $stmt->bindParam(":IdRole", $data['IdRole']);
+            $stmt->bindParam(":Pseudo", $dataJSON->{'name'});
+            $stmt->bindParam(":IdRole", $role);
 
             if ($stmt->execute()) {
                 echo json_encode(["success" => true, "message" => "Inscription réussie."]);
