@@ -33,7 +33,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildMenuItem(context, 'Accueil', '/'),
-              _buildMenuItem(context, 'Recettes', '/recipe'),
+              _buildMenuItem(context, 'Recettes', '/affichage-recette'),
               _buildMenuItem(context, 'Créer une recette', '/creation-recette'),
               _buildMenuItem(context, 'Mon compte', '/profil'),
               _buildMenuItem(context, 'Contact', '/contact'),

@@ -83,8 +83,8 @@ class _MyFormState extends State<Inscription> {
                     children: <Widget>[
                       TextFormField(
                         controller: nameController,
-                        decoration: InputDecoration(
-                          labelText: personName,
+                        decoration: const InputDecoration(
+                          labelText: 'Nom',
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) {

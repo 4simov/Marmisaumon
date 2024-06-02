@@ -1,11 +1,14 @@
 <?php
-use App;
+use App\Router;
 use Controllers\UserController;
-use MyEnum\HttpEnum;
 
-$router = new App\Router();
+// Crée une instance du routeur
+$router = new Router();
 
-echo HttpEnum::GET->value;
-//Si l'url correspond à /user => utilisation de UserController->getuserByEmail($request)
-$router->addRoute( HttpEnum::GET->value . '/utilisateur', UserController::class, 'getUserByEmail');
-$router->addRoute( HttpEnum::POST->value . '/utilisateur', UserController::class, 'setUser');
+// Ajoutez les routes avec les méthodes HTTP appropriées
+$router->addRoute('GET', '/utilisateur', UserController::class, 'getUserByEmail');
+$router->addRoute('POST', '/utilisateur', UserController::class, 'getInscription');
+$router->addRoute('GET', '/utilisateur/profile', UserController::class, 'readUser');
+$router->addRoute('PUT', '/updateUser', UserController::class, 'updateUser');
+$router->addRoute('PUT', '/updatePassword', UserController::class, 'updatePassword');
+$router->addRoute('DELETE', '/deleteUser', UserController::class, 'deleteUser');
