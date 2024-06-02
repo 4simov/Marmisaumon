@@ -8,6 +8,7 @@ $router = new Router();
 
 // Ajoutez les routes avec les méthodes HTTP appropriées
 $router->addRoute(HttpEnum::GET->value .'/utilisateur', UserController::class, 'getUserByEmail', RolesEnum::INVITE);
+$router->addRoute(HttpEnum::GET->value .'/utilisateur/id', UserController::class, 'getUserById', RolesEnum::INVITE);
 $router->addRoute(HttpEnum::POST->value . '/utilisateur', UserController::class, 'getInscription', RolesEnum::INVITE);
 $router->addRoute(HttpEnum::GET->value . '/utilisateur/profile', UserController::class, 'readUser', RolesEnum::INVITE);
 $router->addRoute(HttpEnum::PUT->value . '/updateUser', UserController::class, 'updateUser', RolesEnum::UTILISATEUR);
