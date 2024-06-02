@@ -17,6 +17,8 @@ class _MyFormState extends State<Inscription> {
   TextEditingController confirmPasswordController = TextEditingController();
   TextEditingController nameController = TextEditingController();
 
+ late var personName = 'John Doe';
+  
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -31,20 +33,26 @@ class _MyFormState extends State<Inscription> {
       try {
         print('Sending request to API...');
         var response = await http.post(
-          Uri.http('localhost:8000', '/inscription'), 
+          Uri.http('localhost:8080','utilisateur'), // URL correcte
           body: json.encode(payload),
-          headers: {"Content-Type": "application/json"},
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            'Content-Type': 'application/json',
+            'Accept': '*/*'
+          }
         );
 
         print('Response received. Status code: ${response.statusCode}');
         if (response.statusCode == 200) {
-          var responseData = json.decode(response.body);
-          print('Response data: $responseData');
-          if (responseData['success']) {
-            print('Inscription réussie');
-          } else {
-            print('Erreur: ${responseData['message']}');
-          }
+          print(' AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+          print(response.body);
+          print(' BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB');
+          //var temp = json.decode(response.body);
+          var Json = json.decode(response.body)['name'];
+          //personName = Json;
+          setState(() {
+            personName = Json;
+          });
         } else {
           print('Erreur de connexion: ${response.statusCode}');
         }

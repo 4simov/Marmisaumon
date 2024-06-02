@@ -18,22 +18,27 @@ class Router {
         $this->routes[$route] = ['controller' => $controller, 'action' => $action];
     }
 
+    /**
+     * Traduit l'url de façon à utiliser le bon endpoint à travers les controllers
+     */
     public function dispatch($uri) {
-        if (array_key_exists($uri, $this->routes)) {
-            $controller = $this->routes[$uri]['controller'];
-            $action = $this->routes[$uri]['action'];
+        if (array_key_exists($_SERVER['REQUEST_METHOD'] . $uri, $this->routes)) {
+            //on récupère l'intitulé de la classe que l'on veut utiliser
+            $controller = $this->routes[$_SERVER['REQUEST_METHOD'] .$uri]['controller'];
+            //on récupère l'intitulé de la function de la classe
+            $action = $this->routes[$_SERVER['REQUEST_METHOD'] .$uri]['action'];
 
-            $controller = new $controller();
+            //on récupère le body de la requête du client
             $requestBody = file_get_contents('php://input');
-
-            if($requestBody != null) {
-                $controller->$action($requestBody);
-            }
-            else {
-                $controller->$action();
-            }
-        } else {
-            include __DIR__ .'/Errors/404.php';
+            $dataJSON = json_decode($requestBody);
+            $controller = new $controller($requestBody);
+            //print_r($dataJSON);
+            var_dump($dataJSON);
+            $reponse = $controller->$action($dataJSON);//Exemple de résultat : UserController->getUserByEmail($dataJSON)
+        }
+        //Aucune route correspondant à l'url n'a été trouvé
+        else {
+            //include __DIR__ .'/Errors/404.php';
         }
     }
 }
