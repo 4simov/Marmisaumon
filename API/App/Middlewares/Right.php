@@ -17,15 +17,15 @@ class Right {
         $token = $all_headers = getallheaders()['Authorization'] ?? null;
         $user = [];
         if($token != null) {
-            $query = "SELECT * FROM utilisateur WHERE Token = :token LIMIT 1";
+            $query = "SELECT * FROM utilisateur WHERE Token = :token";
             $check = $pdo->prepare($query);
             $check->execute(['token' => $token]);
-            $user = $check->fetchAll(PDO::FETCH_ASSOC);
+            $user = $check->fetch(PDO::FETCH_ASSOC);
         }
         $role = RolesEnum::INVITE->value;
         
-        if(count($user) > 0) {
-            $role = $u["IdRole"];
+        if(!empty($user)) {
+            $role = $user["IdRole"];
         }
 
         if( $right->value <= $role) {

@@ -19,8 +19,6 @@ class _MyFormState extends State<Connexion2> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      var token = await _cookieManager.getCookieToken();
-
 
       var payload = {
         'mail': emailController.text,
@@ -35,7 +33,7 @@ class _MyFormState extends State<Connexion2> {
           headers: {
             'Content-Type': 'application/json',
             'Accept': '*/*',
-            'Authorization': token ?? ''
+            'Authorization': ''
           }
         );
 

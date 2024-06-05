@@ -2,6 +2,7 @@
 
 namespace Controllers;
 use MiddlewareHome\Right;
+use MyEnum\RolesEnum;
 use PDO;
 use System\DatabaseConnector;
 
@@ -21,12 +22,13 @@ class UserController extends Controller {
         }
         else {
             $query = "SELECT * FROM  " . $this->table_name . " WHERE mail = :mail AND password = :password";
-            $check = $this->getDB()->getPDO()->prepare($query);
-            $check->setFetchMode(PDO::FETCH_ASSOC);
-            $check->execute(['mail' => $dataJSON->{"mail"},
+            $cmd = $this->getDB()->getPDO()->prepare($query);
+            $cmd->execute(['mail' => $dataJSON->{"mail"},
                             'password' => $dataJSON->{"password"}]);
 
-            if(empty($check)) {
+            
+            $row = $cmd->fetch(PDO::FETCH_ASSOC);
+            if(empty($row)) {
                 $erreur= json_encode(['error' => false, 'message' => 'mauvais identifiants de connexion']);
                 echo $erreur;
             }
@@ -47,16 +49,17 @@ class UserController extends Controller {
     /* Inscription d'un utilisateur
      * @param $requestBody => correspond au body/json que doit contenir la requête
      */
-    public function getInscription($dataJSON) {
+    public function Inscription($dataJSON) {
+        echo $dataJSON->{'mail'};
         if (isset($dataJSON->{"mail"}) && isset($dataJSON->{"password"})) {
             // Vérifie si l'email existe déjà
             $query = "SELECT COUNT(*) as count FROM " . $this->table_name . " WHERE Mail = :Mail";
             $cmd = $this->getPDO()->prepare($query);
-            $cmd->bindParam(":Mail", $data['mail']);
+            $cmd->bindParam(":Mail", $dataJSON->{'mail'});
             $cmd->execute();
             $row = $cmd->fetch(PDO::FETCH_ASSOC);
 
-            if (empty($row) > 0) {
+            if (!empty($row)) {
                 echo json_encode(['error' => false, 'message' => 'Un compte avec cet e-mail ' . $dataJSON->{"mail"} .' existe déjà.']);
                 return;
             }
@@ -68,7 +71,8 @@ class UserController extends Controller {
             // Hashage du mot de passe avant l'enregistrement
             $password_hash = password_hash($dataJSON->{'password'}, PASSWORD_BCRYPT);
 
-            $role = 1;
+            
+            $role = RolesEnum::UTILISATEUR->value;
             // Bind des valeurs
             $cmd->bindParam(":Mail", $dataJSON->{'mail'});
             $cmd->bindParam(":Password", $password_hash);
@@ -103,33 +107,6 @@ class UserController extends Controller {
             }
             else {
                 echo json_encode($user[0]["Mail"]);
-            }
-        }
-    }
-
-    function setUser($requestBody) {
-        if( $requestBody == null) {
-            throw new \Exception("Le requestBody est null");
-        }
-        else {
-            $pdo = $this->getDB()->getPDO();
-            $query = "SELECT * FROM " . $this->table_name ." WHERE IdUtilisateur = :login";
-            $check = $pdo->prepare($query);
-            $check->setFetchMode(PDO::FETCH_ASSOC);
-            $check->execute(['login' => $this->params[0]]);
-            if($check->rowCount() > 0) {
-                $erreur= "-x>mail déjà existant";
-                echo $erreur;
-            }
-            else {
-                $ins = $pdo->prepare("insert into utilisateurs (nom, prenom, login, pass) values(?,?,?,?)");
-                $ins->execute(array(
-                    "testNom",
-                    "testPrenom",
-                    $requestBody->{"mail"},
-                    $requestBody->{"password"},
-                ));
-                echo "->compte créé";
             }
         }
     }
