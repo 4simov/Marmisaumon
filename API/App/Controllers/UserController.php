@@ -15,31 +15,30 @@ class UserController extends Controller {
      * @param $dataJSON => correspond au body/json que doit contenir la requête
      * $request->{nomDeLaVariableVoulue} => renvoie la donnée souhaité
      */
-    function getUserByEmail($dataJSON = null){
+    function login($dataJSON = null){
         if( $dataJSON == null) {
             throw new \Exception("Le requestBody est null");
         }
         else {
-            $query = "SELECT * FROM utilisateurs WHERE login = :login AND pass = :pass";
+            $query = "SELECT * FROM  " . $this->table_name . " WHERE mail = :mail AND password = :password";
             $check = $this->getDB()->getPDO()->prepare($query);
             $check->setFetchMode(PDO::FETCH_ASSOC);
-            $check->execute(['login' => $dataJSON->{"email"},
-                            'pass' => $dataJSON->{"password"}]);
+            $check->execute(['mail' => $dataJSON->{"mail"},
+                            'password' => $dataJSON->{"password"}]);
 
-            if($check->rowCount() == 0) {
-                $erreur= "#Réponse <br> mauvais login ou mot de passe";
+            if(empty($check)) {
+                $erreur= json_encode(['error' => false, 'message' => 'mauvais identifiants de connexion']);
                 echo $erreur;
             }
             else {
                 $token = $this->generateGuid();
-                $data = [ 'token' => $token];
+                $data = ['token' => $token];
                 //stockage dans la base du nouveau token
-                $sql = "UPDATE utilisateurs SET token = :token WHERE login = :login";
+                $sql = "UPDATE  " . $this->table_name . " SET token = :token WHERE mail = :mail";
                 $stmt =  $this->getDB()->getPDO()->prepare($sql);
-                $stmt->execute(['token' => $token, 'login' => $dataJSON->{"email"}]);
+                $stmt->execute(['token' => $token, 'mail' => $dataJSON->{"mail"}]);
 
-                header('Content-type: application/json');
-                echo json_encode( $data );
+                echo json_encode($data);
                 //Réponse=>renvoyer un nouveau token au client et l'inscrit dans la BDD ( dans les cookies ? )
             }
         }
@@ -49,16 +48,16 @@ class UserController extends Controller {
      * @param $requestBody => correspond au body/json que doit contenir la requête
      */
     public function getInscription($dataJSON) {
-        if ($dataJSON->token != null && isset($dataJSON->{"email"}) && isset($dataJSON->{"password"})) {
+        if (isset($dataJSON->{"mail"}) && isset($dataJSON->{"password"})) {
             // Vérifie si l'email existe déjà
             $query = "SELECT COUNT(*) as count FROM " . $this->table_name . " WHERE Mail = :Mail";
             $cmd = $this->getPDO()->prepare($query);
-            $cmd->bindParam(":Mail", $data['Mail']);
+            $cmd->bindParam(":Mail", $data['mail']);
             $cmd->execute();
             $row = $cmd->fetch(PDO::FETCH_ASSOC);
 
-            if ($row['count'] > 0) {
-                echo json_encode(['success' => false, 'message' => 'Un compte avec cet e-mail existe déjà.']);
+            if (empty($row) > 0) {
+                echo json_encode(['error' => false, 'message' => 'Un compte avec cet e-mail ' . $dataJSON->{"mail"} .' existe déjà.']);
                 return;
             }
 
@@ -71,18 +70,19 @@ class UserController extends Controller {
 
             $role = 1;
             // Bind des valeurs
-            $cmd->bindParam(":Mail", $dataJSON->{'email'});
+            $cmd->bindParam(":Mail", $dataJSON->{'mail'});
             $cmd->bindParam(":Password", $password_hash);
             $cmd->bindParam(":Pseudo", $dataJSON->{'name'});
             $cmd->bindParam(":IdRole", $role);
 
-            if ($cmd->execute()) {
+            if($cmd->execute()) {
                 echo json_encode(["success" => true, "message" => "Inscription réussie."]);
-            } else {
-                echo json_encode(["success" => false, "message" => "Impossible de créer l'utilisateur."]);
+            }
+            else {
+                echo json_encode(["error" => false, "message" => "Impossible de créer l'utilisateur."]);
             }
         } else {
-            echo json_encode(["success" => false, "message" => "Données manquantes."]);
+            echo json_encode(["error" => false, "message" => "Données manquantes."]);
         }
     }
 

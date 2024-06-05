@@ -25,7 +25,7 @@ class _MyFormState extends State<Inscription> {
 
       var payload = {
         'name': nameController.text,
-        'email': emailController.text,
+        'mail': emailController.text,
         'password': passwordController.text,
         'confirm_password': confirmPasswordController.text,
       };
@@ -44,15 +44,8 @@ class _MyFormState extends State<Inscription> {
 
         print('Response received. Status code: ${response.statusCode}');
         if (response.statusCode == 200) {
-          print(' AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
-          print(response.body);
-          print(' BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB');
-          //var temp = json.decode(response.body);
-          var Json = json.decode(response.body)['name'];
-          //personName = Json;
-          setState(() {
-            personName = Json;
-          });
+          print(json.decode(response.body));
+
         } else {
           print('Erreur de connexion: ${response.statusCode}');
         }

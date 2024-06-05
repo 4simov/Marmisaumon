@@ -9,10 +9,5 @@ use System\DatabaseConnector;
  */
 class IngredientsController {
     private $conn;
-    private $table_name = "recette";
-
-    public function __construct() {
-        $database = new DatabaseConnector();
-        $this->conn = $database->getPDO();
-    }
+    private $table_name = "ingredient";
 }

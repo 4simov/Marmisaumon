@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         '/contact': (context) =>
             const ContactPage(), // Page de contact //Marche
         '/connexion': (context) =>
-            const Connexion2(), // Page de connexion //Marche pas
+            Connexion2(), // Page de connexion //Marche pas
         '/inscription': (context) => Inscription(), // Page d'inscription
       },
     );

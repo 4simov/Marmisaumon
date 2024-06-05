@@ -2,9 +2,56 @@ import 'package:flutter/material.dart';
 import 'header.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'Utils/cookieManager.dart';
 
-class Connexion2 extends StatelessWidget {
-  const Connexion2({Key? key}) : super(key: key);
+class Connexion2 extends StatefulWidget {
+  @override
+  _MyFormState createState() => _MyFormState();
+}
+
+class _MyFormState extends State<Connexion2> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final CookieManager _cookieManager = CookieManager();
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  Future<void> _submitForm() async {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+
+      var token = await _cookieManager.getCookieToken();
+
+
+      var payload = {
+        'mail': emailController.text,
+        'password': passwordController.text,
+      };
+
+      try {
+        print('Sending request to API...');
+        var response = await http.post(
+          Uri.http('localhost:8080','utilisateur/login'), // URL correcte
+          body: json.encode(payload),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': '*/*',
+            'Authorization': token ?? ''
+          }
+        );
+
+        print('Response received. Status code: ${response.statusCode}');
+        if (response.statusCode == 200) {
+          var token = json.decode(response.body)['token'];
+          await _cookieManager.saveCookieToken(token);
+          print(await _cookieManager.getCookieToken());
+        } else {
+          print('Erreur de connexion: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Exception: $e');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +75,7 @@ class Connexion2 extends StatelessWidget {
                   ),
                   const SizedBox(height: 20.0),
                   Form(
+                    key: _formKey,
                     child: Column(
                       children: [
                         TextFormField(
@@ -40,6 +88,7 @@ class Connexion2 extends StatelessWidget {
                             }
                             return null;
                           },
+                          controller:emailController
                         ),
                         const SizedBox(height: 20.0),
                         TextFormField(
@@ -53,12 +102,11 @@ class Connexion2 extends StatelessWidget {
                             }
                             return null;
                           },
+                          controller: passwordController,
                         ),
                         const SizedBox(height: 20.0),
                         ElevatedButton(
-                          onPressed: () {
-                            // Traitement de la connexion
-                          },
+                          onPressed: _submitForm,
                           child: const Text('Se connecter'),
                         ),
                       ],
