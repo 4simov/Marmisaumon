@@ -19,6 +19,16 @@ class RecipePage extends StatefulWidget {
 
 class _RecipePageState extends State<RecipePage> {
   List<Uint8List> _selectedImages = [];
+  List<String> ingredients = [ "Tomate", "Fromage", "Basilic", "Sel", "Poivre", "Oignon", "Ail", "Poulet",
+    "Bœuf", "Porc", "Agneau", "Poisson", "Crevettes", "Carotte", "Pomme de terre",
+    "Courgette", "Aubergine", "Épinards", "Brocoli", "Chou-fleur", "Champignons",
+    "Lait", "Crème", "Beurre", "Huile d'olive", "Vinaigre", "Citron", "Lime",
+    "Oranges", "Pommes", "Bananes", "Fraises", "Framboises", "Myrtilles", "Mangue",
+    "Avocat", "Concombre", "Poivron", "Chili", "Paprika", "Cumin", "Curcuma",
+    "Gingembre", "Cannelle", "Clous de girofle", "Noix de muscade", "Anis étoilé",
+    "Cardamome", "Safran", "Pâtes", "Riz", "Quinoa", "Lentilles", "Pois chiches"];
+  String? selectedIngredient;
+  List<String> selectedIngredients = [];
 
   @override
   Widget build(BuildContext context) {
@@ -55,160 +65,122 @@ class _RecipePageState extends State<RecipePage> {
                               return null;
                             },
                           ),
-                          const SizedBox(height: 16.0),
+                          const SizedBox(height: 24.0),
                           const Text(
-                            'Liste des ustensiles',
+                            'Description',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           TextFormField(
+                            maxLines: 4,
                             decoration: const InputDecoration(
-                                hintText: 'Liste des ustensiles'),
+                                hintText: 'Description de la recette'),
                             validator: (value) {
                               if (value!.isEmpty) {
-                                return 'Veuillez entrer la liste des ustensiles';
+                                return 'Veuillez entrer la description de la recette';
                               }
                               return null;
                             },
                           ),
-                          const SizedBox(height: 16.0),
+                          const SizedBox(height: 24.0),
                           const Text(
-                            'Liste des ingrédients',
+                            'Ingrédients',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          DropdownButtonFormField<String>(
+                            decoration: const InputDecoration(
+                                hintText: 'Sélectionnez un ingrédient'),
+                            items: ingredients.map((String ingredient) {
+                              return DropdownMenuItem<String>(
+                                value: ingredient,
+                                child: Text(ingredient),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedIngredient = newValue;
+                              });
+                            },
+                            value: selectedIngredient,
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (selectedIngredient != null &&
+                                  !selectedIngredients
+                                      .contains(selectedIngredient)) {
+                                setState(() {
+                                  selectedIngredients.add(selectedIngredient!);
+                                });
+                              }
+                            },
+                            child: const Text('Ajouter Ingrédient'),
+                          ),
+                          Wrap(
+                            spacing: 8.0,
+                            children: selectedIngredients
+                                .map((ingredient) => Chip(
+                                      label: Text(ingredient),
+                                      onDeleted: () {
+                                        setState(() {
+                                          selectedIngredients.remove(ingredient);
+                                        });
+                                      },
+                                    ))
+                                .toList(),
+                          ),
+                          const SizedBox(height: 24.0),
+                          const Text(
+                            'Instructions',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           TextFormField(
+                            maxLines: 4,
                             decoration: const InputDecoration(
-                                hintText: 'Liste des ingrédients'),
+                                hintText: 'Instructions de la recette'),
                             validator: (value) {
                               if (value!.isEmpty) {
-                                return 'Veuillez entrer la liste des ingrédients';
+                                return 'Veuillez entrer les instructions de la recette';
                               }
                               return null;
                             },
                           ),
-                          const SizedBox(height: 16.0),
+                          const SizedBox(height: 24.0),
                           const Text(
-                            'Etapes de la recette',
+                            'Photo',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => _openFileExplorer(context),
+                            child: const Text('Ajouter des photos'),
+                          ),
+                          const SizedBox(height: 24.0),
+                          const Text(
+                            'Commentaires',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                           TextFormField(
                             decoration: const InputDecoration(
-                                hintText: 'Etapes de la recette'),
+                                hintText: 'Espace commentaire'),
                             validator: (value) {
                               if (value!.isEmpty) {
-                                return 'Veuillez entrer les étapes de la recette';
+                                return 'Veuillez entrer votre commentaire';
                               }
                               return null;
                             },
+                          ),
+                          const SizedBox(height: 24.0),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (Form.of(context).validate()) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('Formulaire validé !')),
+                                );
+                              }
+                            },
+                            child: const Text('Valider'),
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 16.0),
-                    Container(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: 200.0,
-                            color: Colors.grey[300],
-                            margin: const EdgeInsets.only(bottom: 16.0),
-                            child: _selectedImages.isNotEmpty
-                                ? ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: _selectedImages.length,
-                                    itemBuilder: (context, index) {
-                                      return Stack(
-                                        children: [
-                                          Container(
-                                            width: 200.0,
-                                            height: 200.0,
-                                            margin: const EdgeInsets.only(
-                                                right: 8.0),
-                                            child: Image.memory(
-                                              _selectedImages[index],
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          Positioned(
-                                            top: 0,
-                                            right: 0,
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  _selectedImages
-                                                      .removeAt(index);
-                                                });
-                                              },
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: Colors.black
-                                                      .withOpacity(0.5),
-                                                  shape: BoxShape.circle,
-                                                ),
-                                                padding:
-                                                    const EdgeInsets.all(4.0),
-                                                child: const Icon(
-                                                  Icons.close,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  )
-                                : TextButton(
-                                    onPressed: () {
-                                      _openFileExplorer(context);
-                                    },
-                                    child: const Text('Ajouter des photos'),
-                                  ),
-                          ),
-                          const Text(
-                            'Conseil de l\'auteur',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          TextFormField(
-                            decoration: const InputDecoration(
-                                hintText: 'Conseil de l\'auteur'),
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Veuillez entrer le conseil de l\'auteur';
-                              }
-                              return null;
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-                    const Text(
-                      'Espace commentaire',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    TextFormField(
-                      decoration:
-                          const InputDecoration(hintText: 'Espace commentaire'),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Veuillez entrer votre commentaire';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 24.0),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (Form.of(context).validate()) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Formulaire validé !')),
-                          );
-                        }
-                      },
-                      child: const Text('Valider'),
                     ),
                   ],
                 ),
