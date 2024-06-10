@@ -3,7 +3,6 @@ header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS, DELETE, PUT");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 
-// Gérer les requêtes OPTIONS (pré-vol)
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     http_response_code(200);
     exit();
@@ -15,7 +14,7 @@ use GuzzleHttp\Psr7\ServerRequest;
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/App/Routes.php';
 
-$uri = $_SERVER['REQUEST_URI']
+$uri = $_SERVER['REQUEST_URI'];
 // Le reste de votre code
 $request = ServerRequest::fromGlobals();
 $response = new Response();
