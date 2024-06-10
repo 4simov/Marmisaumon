@@ -9,6 +9,7 @@ import 'affichageRecette.dart';
 import 'inscription.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'ajoutIngrédient.dart';
+import 'demandeIngredient.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
             Connexion2(), // Page de connexion //Marche pas
         '/inscription': (context) => Inscription(), // Page d'inscription
         'ajoutIngredient': (context) => const AddIngredientPage(),
+        '/admin': (context) => const AdminPage(),
       },
     );
   }
