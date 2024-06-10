@@ -41,12 +41,11 @@ class Router {
 
             //on récupère le body de la requête du client
             $requestBody = file_get_contents('php://input');
-            $dataJSON = json_decode($requestBody);
+            $dataJson = json_decode($requestBody);
             $controller = new $controller($requestBody, $rightEndpoint, $params);
 
-
             if($controller->isRigth()) {
-                $reponse = $controller->$action($dataJSON);//Exemple de résultat : UserController->getUserByEmail($dataJSON)
+                $reponse = $controller->$action($dataJson);//Exemple de résultat : UserController->getUserByEmail($dataJson)
             }
             else {
                 echo "Vous n'avez pas les droits nécessaires pour exécuter cette actions.";

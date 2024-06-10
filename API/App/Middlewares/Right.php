@@ -14,20 +14,26 @@ use PDO;
 class Right {
     static function rightChecker( $pdo, $right) {
         //On récupère l'entrée du token dans le header de la requête
-        $token = $all_headers = getallheaders()['Authorization'];
-        $query = "SELECT * FROM utilisateur WHERE Token = :token LIMIT 1";
-        $check = $pdo->prepare($query);
-        $check->execute(['token' => $token]);
-        $user = $check->fetchAll();
-        //récupération de l'utilisateur
-        foreach($user as $u) {
-            if( $right->value <= $u["IdRole"]) {
-                return true;
-            }
-            else{
-                return false;
-            }
+        $token = $all_headers = getallheaders()['Authorization'] ?? null;
+        $user = [];
+        if($token != null) {
+            $query = "SELECT * FROM utilisateur WHERE Token = :token";
+            $check = $pdo->prepare($query);
+            $check->execute(['token' => $token]);
+            $user = $check->fetch(PDO::FETCH_ASSOC);
         }
-        return false;
+        $role = RolesEnum::INVITE->value;
+        
+        if(!empty($user)) {
+            $role = $user["IdRole"];
+        }
+
+        if( $right->value <= $role) {
+            return true;
+        }
+        else{
+            return false;
+        }
+
     }
 }
