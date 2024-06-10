@@ -1,7 +1,28 @@
 <?php
-use App;
-use Controllers;
+use App\Router;
+use Controllers\IngredientsController;
+use Controllers\UserController;
+use MyEnum\HttpEnum;
+use MyEnum\RolesEnum;
+// Crée une instance du routeur
+$router = new Router();
 
-$router = new App\Router();
+// Ajoutez les routes avec les méthodes HTTP appropriées
+$router->addRoute(HttpEnum::GET->value .'/utilisateur', UserController::class, 'getUserByEmail', RolesEnum::ADMIN);
+$router->addRoute(HttpEnum::GET->value .'/utilisateur/id', UserController::class, 'getUserById', RolesEnum::ADMIN);
+$router->addRoute(HttpEnum::POST->value . '/utilisateur', UserController::class, 'Inscription', RolesEnum::INVITE);
+$router->addRoute(HttpEnum::POST->value . '/utilisateur/login', UserController::class, 'login', RolesEnum::INVITE);
+$router->addRoute(HttpEnum::GET->value . '/utilisateur/profile', UserController::class, 'readUser', RolesEnum::INVITE);
+$router->addRoute(HttpEnum::PUT->value . '/updateUser', UserController::class, 'updateUser', RolesEnum::UTILISATEUR);
+$router->addRoute(HttpEnum::PUT->value . '/updatePassword', UserController::class, 'updatePassword', RolesEnum::UTILISATEUR);
+$router->addRoute(HttpEnum::DELETE->value . '/deleteUser', UserController::class, 'deleteUser', RolesEnum::UTILISATEUR);
 
-$router->addRoute('/login', Controllers\UserController::class, 'getUserByEmail');
+//Recettes
+$router->addRoute(HttpEnum::GET->value . '/recettes', UserController::class, '', RolesEnum::INVITE);
+$router->addRoute(HttpEnum::GET->value . '/recettes/id', UserController::class, '', RolesEnum::INVITE);
+$router->addRoute(HttpEnum::POST->value . '/recettes', UserController::class, '', RolesEnum::UTILISATEUR);
+$router->addRoute(HttpEnum::DELETE->value . '/recettes/id', UserController::class, '', RolesEnum::ADMIN);
+
+//Ingrédients
+$router->addRoute(HttpEnum::GET->value . '/ingredients', IngredientsController::class, 'getIngredients', RolesEnum::INVITE);
+$router->addRoute(HttpEnum::POST->value . '/ingredients', IngredientsController::class, 'setIngredient', RolesEnum::UTILISATEUR);
