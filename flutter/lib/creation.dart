@@ -19,16 +19,19 @@ class RecipePage extends StatefulWidget {
 
 class _RecipePageState extends State<RecipePage> {
   List<Uint8List> _selectedImages = [];
-  List<String> ingredients = [ "Tomate", "Fromage", "Basilic", "Sel", "Poivre", "Oignon", "Ail", "Poulet",
+  List<String> ingredients = [
+    "Tomate", "Fromage", "Basilic", "Sel", "Poivre", "Oignon", "Ail", "Poulet",
     "Bœuf", "Porc", "Agneau", "Poisson", "Crevettes", "Carotte", "Pomme de terre",
     "Courgette", "Aubergine", "Épinards", "Brocoli", "Chou-fleur", "Champignons",
     "Lait", "Crème", "Beurre", "Huile d'olive", "Vinaigre", "Citron", "Lime",
     "Oranges", "Pommes", "Bananes", "Fraises", "Framboises", "Myrtilles", "Mangue",
     "Avocat", "Concombre", "Poivron", "Chili", "Paprika", "Cumin", "Curcuma",
     "Gingembre", "Cannelle", "Clous de girofle", "Noix de muscade", "Anis étoilé",
-    "Cardamome", "Safran", "Pâtes", "Riz", "Quinoa", "Lentilles", "Pois chiches"];
+    "Cardamome", "Safran", "Pâtes", "Riz", "Quinoa", "Lentilles", "Pois chiches"
+  ];
   String? selectedIngredient;
   List<String> selectedIngredients = [];
+  TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -86,10 +89,24 @@ class _RecipePageState extends State<RecipePage> {
                             'Ingrédients',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
+                          TextField(
+                            controller: searchController,
+                            decoration: const InputDecoration(
+                              hintText: 'Rechercher un ingrédient',
+                            ),
+                            onChanged: (value) {
+                              setState(() {});
+                            },
+                          ),
+                          const SizedBox(height: 8.0),
                           DropdownButtonFormField<String>(
                             decoration: const InputDecoration(
                                 hintText: 'Sélectionnez un ingrédient'),
-                            items: ingredients.map((String ingredient) {
+                            items: ingredients
+                                .where((ingredient) => ingredient
+                                    .toLowerCase()
+                                    .contains(searchController.text.toLowerCase()))
+                                .map((String ingredient) {
                               return DropdownMenuItem<String>(
                                 value: ingredient,
                                 child: Text(ingredient),
@@ -105,8 +122,7 @@ class _RecipePageState extends State<RecipePage> {
                           ElevatedButton(
                             onPressed: () {
                               if (selectedIngredient != null &&
-                                  !selectedIngredients
-                                      .contains(selectedIngredient)) {
+                                  !selectedIngredients.contains(selectedIngredient)) {
                                 setState(() {
                                   selectedIngredients.add(selectedIngredient!);
                                 });
@@ -200,13 +216,13 @@ class _RecipePageState extends State<RecipePage> {
       );
 
       if (result != null) {
-        _selectedImages = result.files.map((file) => file.bytes!).toList();
+        setState(() {
+          _selectedImages = result.files.map((file) => file.bytes!).toList();
+        });
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Photos sélectionnées avec succès')),
         );
-
-        setState(() {});
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Aucune photo sélectionnée')),
