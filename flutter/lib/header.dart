@@ -38,6 +38,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
               _buildMenuItem(context, 'Mon compte', '/profil'),
               _buildMenuItem(context, 'Contact', '/contact'),
               _buildMenuItem(context, 'Inscription - Connexion', '/connexion'),
+              _buildMenuItem(context, 'Nouvel ingrédient', 'ajoutIngredient'),
             ],
           ),
         ],
