@@ -10,7 +10,7 @@ use System\DatabaseConnector;
  * Gère les interactions nécessaires avec la table de la BDD des utilisateurs de l'application
  */
 class UserController extends Controller {
-    private $table_name = "utilisateur";
+    private $table_name = "Utilisateur";
     /**
      * 
      * @param $dataJSON => correspond au body/json que doit contenir la requête
