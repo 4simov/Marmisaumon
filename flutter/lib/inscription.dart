@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:marmisaumon/Utils/constants.dart';
 import 'dart:convert';
 import 'header.dart';
 
@@ -33,7 +34,7 @@ class _MyFormState extends State<Inscription> {
       try {
         print('Sending request to API...');
         var response = await http.post(
-          Uri.http('localhost:8080','utilisateur'), // URL correcte
+          Uri.http(SUCCESS_MESSAGE,'utilisateur'), // URL correcte
           body: json.encode(payload),
           headers: {
             "Access-Control-Allow-Origin": "*",
@@ -45,7 +46,6 @@ class _MyFormState extends State<Inscription> {
         print('Response received. Status code: ${response.statusCode}');
         if (response.statusCode == 200) {
           print(json.decode(response.body));
-
         } else {
           print('Erreur de connexion: ${response.statusCode}');
         }
