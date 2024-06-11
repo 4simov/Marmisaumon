@@ -2,8 +2,10 @@
 use App\Router;
 use Controllers\IngredientsController;
 use Controllers\UserController;
+use Controllers\RecettesController;
 use MyEnum\HttpEnum;
 use MyEnum\RolesEnum;
+
 // Crée une instance du routeur
 $router = new Router();
 
@@ -18,11 +20,12 @@ $router->addRoute(HttpEnum::PUT->value . '/updatePassword', UserController::clas
 $router->addRoute(HttpEnum::DELETE->value . '/deleteUser', UserController::class, 'deleteUser', RolesEnum::UTILISATEUR);
 
 //Recettes
-$router->addRoute(HttpEnum::GET->value . '/recettes', UserController::class, '', RolesEnum::INVITE);
-$router->addRoute(HttpEnum::GET->value . '/recettes/id', UserController::class, '', RolesEnum::INVITE);
-$router->addRoute(HttpEnum::POST->value . '/recettes', UserController::class, '', RolesEnum::UTILISATEUR);
-$router->addRoute(HttpEnum::DELETE->value . '/recettes/id', UserController::class, '', RolesEnum::ADMIN);
+$router->addRoute(HttpEnum::GET->value . '/recettes', RecettesController::class, 'getRecette', RolesEnum::INVITE);
+$router->addRoute(HttpEnum::GET->value . '/recettes/id/', RecettesController::class, 'getRecetteById', RolesEnum::INVITE);
+$router->addRoute(HttpEnum::POST->value . '/recettes', RecettesController::class, '', RolesEnum::UTILISATEUR);
+$router->addRoute(HttpEnum::DELETE->value . '/recettes/id/', RecettesController::class, '', RolesEnum::ADMIN);
 
 //Ingrédients
 $router->addRoute(HttpEnum::GET->value . '/ingredients', IngredientsController::class, 'getIngredients', RolesEnum::INVITE);
+$router->addRoute(HttpEnum::GET->value . '/ingredients/id/', IngredientsController::class, 'getIngredients', RolesEnum::INVITE);
 $router->addRoute(HttpEnum::POST->value . '/ingredients', IngredientsController::class, 'setIngredient', RolesEnum::UTILISATEUR);

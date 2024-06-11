@@ -4,7 +4,7 @@ namespace App;
 
 class Router {
     protected $routes = [];
-    protected $remplacement = '/id';
+    protected $remplacement = '/id/';
     protected $motif = "/\/(\d+)\/?/";
 
     public function __construct() {
@@ -45,7 +45,7 @@ class Router {
             $controller = new $controller($requestBody, $rightEndpoint, $params);
 
             if($controller->isRigth()) {
-                $reponse = $controller->$action($dataJson);//Exemple de résultat : UserController->getUserByEmail($dataJson)
+                $reponse = $controller->$action($dataJson, $params[0]);//Exemple de résultat : UserController->getUserByEmail($dataJson)
             }
             else {
                 echo "Vous n'avez pas les droits nécessaires pour exécuter cette actions.";
@@ -63,16 +63,18 @@ class Router {
      */
     function replaceIdUrl($url) : string {       
         $replaceId = preg_replace($this->motif, $this->remplacement, $url);
+        echo $replaceId;
         return $replaceId;
     }
 
     function getParameters($url) : Array{
-         //Stocke les id glissées dnas l'url
-         $params = [];
+         //Stocke les id glissées dnas l'urls-
+         $params = null;
          if (preg_match_all($this->motif, $url, $params)) {
              // La correspondance est dans $correspondance[0]
              $params = $params[1];
          }
+         var_dump($params);
          return $params;
     }
 }
