@@ -220,5 +220,26 @@ class UserController extends Controller {
             echo json_encode(["message" => "ID utilisateur manquant."]);
         }
     }
+    
+    public function getRole($requestBody) {
+        //Attribue la variable intitulée 'recherche' situé à la racine de l'objet Json => { "recherche" : "blabla" }. "??"
+        $recherche = $input->{'recherche'} ?? '';// "??" applique ce qui est à droite si ce qui est à gauche est null
+        $token = getallheaders()['Authorization'] ?? null;
+        //préparation du Query pour manipuler la table
+        $query = "SELECT * FROM ". $this->table_name . " WHERE Token = :token";
+        //Récupération de la connection à la base de donnée pour y inscrire le Query
+        $cmd = $this->getDB()->getPDO()->prepare($query);
+        $cmd->bindParam(":token", $token);
+        //exécution du query 
+        $cmd->execute();
+        
+        $row = $cmd->fetch(PDO::FETCH_ASSOC);
+
+        if(empty($row)) {
+            echo json_encode(0);
+        } else {
+                echo json_encode($row["IdRole"]);
+            }
+        }
 }
 ?>
