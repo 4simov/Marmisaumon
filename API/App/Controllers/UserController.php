@@ -5,6 +5,10 @@ use MiddlewareHome\Right;
 use MyEnum\RolesEnum;
 use PDO;
 use System\DatabaseConnector;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+require 'vendor/autoload.php';
+
 
 /**
  * Gère les interactions nécessaires avec la table de la BDD des utilisateurs de l'application
@@ -71,7 +75,6 @@ class UserController extends Controller {
             // Hashage du mot de passe avant l'enregistrement
             $password_hash = password_hash($dataJSON->{'password'}, PASSWORD_BCRYPT);
 
-            
             $role = RolesEnum::UTILISATEUR->value;
             // Bind des valeurs
             $cmd->bindParam(":Mail", $dataJSON->{'mail'});
@@ -81,6 +84,8 @@ class UserController extends Controller {
 
             if($cmd->execute()) {
                 echo json_encode(["success" => true, "message" => "Inscription réussie."]);
+                // Appel de la fonction d'envoi d'email après l'inscription réussie
+                $this->sendRegistrationEmail($dataJSON->{'mail'}, $dataJSON->{'name'});
             }
             else {
                 echo json_encode(["error" => false, "message" => "Impossible de créer l'utilisateur."]);
@@ -241,5 +246,36 @@ class UserController extends Controller {
                 echo json_encode($row["IdRole"]);
             }
         }
+
+    function sendRegistrationEmail($userEmail, $userName) {
+        $mail = new PHPMailer(true);
+
+        try {
+            // Configuration du serveur SMTP
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'marmisaumoncube3@gmail.com'; // Votre adresse e-mail Gmail
+            $mail->Password = '*CuBe3cEsI*'; // Votre mot de passe Gmail ou mot de passe d'application
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            // Destinataires
+            $mail->setFrom('marmisaumoncube3@gmail.com', 'Equipe Administrative Marmisaumon');
+            $mail->addAddress($userEmail, $userName);
+
+            // Contenu de l'e-mail
+            $mail->isHTML(true);
+            $mail->Subject = 'Bienvenue sur Marmisaumon !';
+            $mail->Body    = 'Merci de vous êtres enregistrer sur Marmisaumon, ' . $userName . '!';
+            $mail->AltBody = 'Merci de vous êtres enregistrer sur Marmisaumon, ' . $userName . '!';
+
+            $mail->send();
+            echo 'Message envoyé';
+        } catch (Exception $e) {
+            echo "Error, mail pas envoyé: {$mail->ErrorInfo}";
+        }
+    }
 }
 ?>
+
