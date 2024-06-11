@@ -46,9 +46,9 @@ class HomePage extends StatelessWidget {
   HomePage({super.key});
 
   final List<String> imgList = [
-    '../images/Recette1.jpg',
-    '../images/Recette2.jpg',
-    '../images/Recette3.jpg',
+    '../assets/images/Recette1.jpg',
+    '../assets/images/Recette2.jpg',
+    '../assets/images/Recette3.jpg',
   ];
 
   final CarouselController _controller = CarouselController();
