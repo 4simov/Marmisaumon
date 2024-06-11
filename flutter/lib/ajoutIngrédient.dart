@@ -1,10 +1,12 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
 import 'header.dart';
 
 class AddIngredientPage extends StatefulWidget {
-  const AddIngredientPage({Key? key}) : super(key: key);
+  const AddIngredientPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AddIngredientPageState createState() => _AddIngredientPageState();
 }
 
@@ -17,7 +19,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          HeaderWidget(), // Ajout du Header
+          const HeaderWidget(), // Ajout du Header
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
@@ -26,7 +28,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                 children: [
                   TextField(
                     controller: ingredientController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: 'Nom de l\'ingrédient',
                     ),
                   ),
@@ -35,7 +37,7 @@ class _AddIngredientPageState extends State<AddIngredientPage> {
                     onPressed: () {
                       _addIngredient(context);
                     },
-                    child: Text('Ajouter'),
+                    child: const Text('Ajouter'),
                   ),
                 ],
               ),
