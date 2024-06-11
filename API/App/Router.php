@@ -33,12 +33,9 @@ class Router {
                 $reponse = $controller->$action($dataJson, $params[0]);//Exemple de résultat : UserController->getUserByEmail($dataJson)
             }
             else {
-                echo json("Vous n'avez pas les droits nécessaires pour exécuter cette actions.");
-            }
-        } else {
             echo json_encode(["error" => true, "message" => "Vous êtes dans un endroit qui n'existe pas."]);
+            }
         }
-      
         //Aucune route correspondant à l'url n'a été trouvé
         else {
             echo "Vous êtes dans un endroit qui n'existe pas";
