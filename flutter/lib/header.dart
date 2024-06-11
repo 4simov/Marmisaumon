@@ -35,16 +35,17 @@ class _HeaderWidgetState extends State<HeaderWidget> {
             children: <Widget> [
               _buildMenuItem(context, 'Accueil', '/'),
               _buildMenuItem(context, 'Recettes', '/affichage-recette'),
-              if(role.value > RoleEnum.UTILISATEUR.value )
+              if(role.value >= RoleEnum.UTILISATEUR.value )
                 _buildMenuItem(context, 'Créer une recette', '/creation-recette'),//montrer que pour invité
-              if(role.value > RoleEnum.UTILISATEUR.value )
+              if(role.value >= RoleEnum.UTILISATEUR.value )
                 _buildMenuItem(context, 'Mon compte', '/profil'),//montrer que pour utilisateur pour utilisateur 
               _buildMenuItem(context, 'Contact', '/contact'),
-              _buildMenuItem(context, 'Inscription - Connexion', '/connexion'),
-              if(role.value > RoleEnum.UTILISATEUR.value )
+              if(role.value >= RoleEnum.UTILISATEUR.value )
                 _buildMenuItem(context, 'Nouvel ingrédient', 'ajoutIngredient'),//montrer que pour Utilisateur ou plus
               if(role.value >= RoleEnum.ADMIN.value )
                 _buildMenuItem(context, 'Admin', '/admin'),//montrer que pour l'admin
+              if(role.value < RoleEnum.UTILISATEUR.value)
+                _buildMenuItem(context, 'Inscription - Connexion', '/connexion'),
             ],
           ),
         ],
