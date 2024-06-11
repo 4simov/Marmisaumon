@@ -8,6 +8,8 @@ import 'connexion.dart';
 import 'affichageRecette.dart';
 import 'inscription.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'ajoutIngrédient.dart';
+import 'demandeIngredient.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,6 +35,8 @@ class MyApp extends StatelessWidget {
         '/connexion': (context) =>
             Connexion2(), // Page de connexion //Marche pas
         '/inscription': (context) => Inscription(), // Page d'inscription
+        'ajoutIngredient': (context) => const AddIngredientPage(),
+        '/admin': (context) => const AdminPage(),
       },
     );
   }
@@ -42,9 +46,9 @@ class HomePage extends StatelessWidget {
   HomePage({super.key});
 
   final List<String> imgList = [
-    'assets/images/Recette1.jpg',
-    'assets/images/Recette2.jpg',
-    'assets/images/Recette3.jpg',
+    '../assets/images/Recette1.jpg',
+    '../assets/images/Recette2.jpg',
+    '../assets/images/Recette3.jpg',
   ];
 
   final CarouselController _controller = CarouselController();

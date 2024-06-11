@@ -9,84 +9,79 @@ class RecipeDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color blueColor = Color(0xFF001B2E).withOpacity(0.9);
+    Color textColor = Colors.white;
+
     return Scaffold(
       body: Column(
         children: [
           const HeaderWidget(),
+          AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: blueColor),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            title: Text(
+              recipe.name,
+              style: TextStyle(color: blueColor),
+            ),
+            centerTitle: true,
+          ),
           Expanded(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Center(
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        IconButton(
-                          icon: Icon(Icons.arrow_back, color: Colors.black),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                        Text(
-                          recipe.name,
-                          style: TextStyle(
-                            fontSize: 22.0,
-                            fontWeight: FontWeight.bold,
+
+                        SizedBox(
+                          height: 200,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: recipe.photos.map((photo) => Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 5.0),
+                              child: Container(
+                                width: 300,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  image: DecorationImage(
+                                    image: AssetImage(photo),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            )).toList(),
                           ),
                         ),
+                        SizedBox(height: 20),
+                        section('Description', recipe.description, blueColor, textColor),
+                        SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: section('Ustensiles', recipe.utensils.join('\n'), blueColor, textColor),
+                            ),
+                            SizedBox(width: 20),
+                            Expanded(
+                              child: section('Ingrédients', recipe.ingredients.join('\n'), blueColor, textColor),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        section('Étapes', recipe.steps.join('\n'), blueColor, textColor),
+                        SizedBox(height: 20),
+                        section('Commentaires', recipe.comments.join('\n'), blueColor, textColor),
+                        SizedBox(height: 20),
                       ],
                     ),
-                    SizedBox(
-                      height: 200,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: recipe.photos.map((photo) => Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 5.0),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(15.0),
-                            child: Image.asset(photo, fit: BoxFit.cover),
-                          ),
-                        )).toList(),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      'Ustensiles',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    ...recipe.utensils.map((utensil) => Padding(
-                      padding: const EdgeInsets.only(top: 5.0),
-                      child: Text(utensil, style: TextStyle(fontSize: 16)),
-                    )).toList(),
-                    SizedBox(height: 20),
-                    Text(
-                      'Ingrédients',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    ...recipe.ingredients.map((ingredient) => Padding(
-                      padding: const EdgeInsets.only(top: 5.0),
-                      child: Text(ingredient, style: TextStyle(fontSize: 16)),
-                    )).toList(),
-                    SizedBox(height: 20),
-                    Text(
-                      'Étapes',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    ...recipe.steps.map((step) => Padding(
-                      padding: const EdgeInsets.only(top: 5.0),
-                      child: Text(step, style: TextStyle(fontSize: 16)),
-                    )).toList(),
-                    SizedBox(height: 20),
-                    Text(
-                      'Commentaires',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    ...recipe.comments.map((comment) => Padding(
-                      padding: const EdgeInsets.only(top: 5.0),
-                      child: Text(comment, style: TextStyle(fontSize: 16)),
-                    )).toList(),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -95,4 +90,40 @@ class RecipeDetailsPage extends StatelessWidget {
       ),
     );
   }
+
+  Widget section(String title, String content, Color color, Color textColor) {
+    return Container(
+      padding: EdgeInsets.all(16.0),
+      margin: EdgeInsets.symmetric(vertical: 10.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15.0),
+        color: color,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
+          ),
+          SizedBox(height: 10),
+          Text(
+            content,
+            style: TextStyle(fontSize: 16.0, color: textColor),
+          ),
+        ],
+      ),
+    );
+  }
 }
+
+
+
+
+
+
+

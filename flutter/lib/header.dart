@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // ignore: unnecessary_import
 import 'package:flutter/rendering.dart';
+import 'package:marmisaumon/Enums/roleEnum.dart';
 
 class HeaderWidget extends StatefulWidget {
   const HeaderWidget({super.key});
@@ -12,7 +13,7 @@ class HeaderWidget extends StatefulWidget {
 
 class _HeaderWidgetState extends State<HeaderWidget> {
   String _hoveredItem = '';
-
+  RoleEnum role = RoleEnum.UTILISATEUR;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,13 +32,19 @@ class _HeaderWidgetState extends State<HeaderWidget> {
           const SizedBox(height: 20.0),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            children: <Widget> [
               _buildMenuItem(context, 'Accueil', '/'),
               _buildMenuItem(context, 'Recettes', '/affichage-recette'),
-              _buildMenuItem(context, 'Créer une recette', '/creation-recette'),
-              _buildMenuItem(context, 'Mon compte', '/profil'),
+              if(role.value > RoleEnum.UTILISATEUR.value )
+                _buildMenuItem(context, 'Créer une recette', '/creation-recette'),//montrer que pour invité
+              if(role.value > RoleEnum.UTILISATEUR.value )
+                _buildMenuItem(context, 'Mon compte', '/profil'),//montrer que pour utilisateur pour utilisateur 
               _buildMenuItem(context, 'Contact', '/contact'),
               _buildMenuItem(context, 'Inscription - Connexion', '/connexion'),
+              if(role.value > RoleEnum.UTILISATEUR.value )
+                _buildMenuItem(context, 'Nouvel ingrédient', 'ajoutIngredient'),//montrer que pour Utilisateur ou plus
+              if(role.value >= RoleEnum.ADMIN.value )
+                _buildMenuItem(context, 'Admin', '/admin'),//montrer que pour l'admin
             ],
           ),
         ],

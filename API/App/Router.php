@@ -68,10 +68,9 @@ class Router {
     }
 
     function getParameters($url) : Array{
-         //Stocke les id glissées dnas l'urls-
+         //Stocke les id glissées dnas l'url-
          $params = null;
          if (preg_match_all($this->motif, $url, $params)) {
-             // La correspondance est dans $correspondance[0]
              $params = $params[1];
          }
          var_dump($params);

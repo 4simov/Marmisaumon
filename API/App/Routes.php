@@ -9,14 +9,15 @@ use MyEnum\RolesEnum;
 // Crée une instance du routeur
 $router = new Router();
 
-// Ajoutez les routes avec les méthodes HTTP appropriées
-$router->addRoute(HttpEnum::GET->value .'/utilisateur', UserController::class, 'getUserByEmail', RolesEnum::ADMIN);
-$router->addRoute(HttpEnum::GET->value .'/utilisateur/id', UserController::class, 'getUserById', RolesEnum::ADMIN);
-$router->addRoute(HttpEnum::POST->value . '/utilisateur', UserController::class, 'Inscription', RolesEnum::INVITE);
-$router->addRoute(HttpEnum::POST->value . '/utilisateur/login', UserController::class, 'login', RolesEnum::INVITE);
-$router->addRoute(HttpEnum::GET->value . '/utilisateur/profile', UserController::class, 'readUser', RolesEnum::INVITE);
-$router->addRoute(HttpEnum::PUT->value . '/updateUser', UserController::class, 'updateUser', RolesEnum::UTILISATEUR);
-$router->addRoute(HttpEnum::PUT->value . '/updatePassword', UserController::class, 'updatePassword', RolesEnum::UTILISATEUR);
+// Ajoutez les routes avec les méthodes HTTP appropriées 
+$router->addRoute(HttpEnum::GET->value .'/utilisateurs', UserController::class, 'getUserByEmail', RolesEnum::ADMIN);
+$router->addRoute(HttpEnum::GET->value .'/utilisateurs/id', UserController::class, 'getUserById', RolesEnum::ADMIN);
+$router->addRoute(HttpEnum::POST->value . '/utilisateurs', UserController::class, 'Inscription', RolesEnum::INVITE);
+$router->addRoute(HttpEnum::POST->value . '/utilisateurs/login', UserController::class, 'login', RolesEnum::INVITE);
+$router->addRoute(HttpEnum::GET->value .'/utilisateurs/role', UserController::class, 'getRole', RolesEnum::INVITE);
+//$router->addRoute(HttpEnum::GET->value . '/utilisateur/profile', UserController::class, 'readUser', RolesEnum::INVITE);
+//$router->addRoute(HttpEnum::PUT->value . '/updateUser', UserController::class, 'updateUser', RolesEnum::UTILISATEUR);
+//$router->addRoute(HttpEnum::PUT->value . '/updatePassword', UserController::class, 'updatePassword', RolesEnum::UTILISATEUR);
 $router->addRoute(HttpEnum::DELETE->value . '/deleteUser', UserController::class, 'deleteUser', RolesEnum::UTILISATEUR);
 
 //Recettes
