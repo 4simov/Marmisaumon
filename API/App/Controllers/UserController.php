@@ -23,18 +23,16 @@ class UserController extends Controller {
     function login($dataJSON = null){
         if ($dataJSON == null) {
             echo json_encode(["error" => true, "message" => "Le requestBody est null"]);
-            return;
         } else {
             $query = "SELECT * FROM " . $this->table_name . " WHERE mail = :mail AND password = :password";
             $cmd = $this->getDB()->getPDO()->prepare($query);
             $cmd->execute(['mail' => $dataJSON->{"mail"}, 'password' => $dataJSON->{"password"}]);
 
             $row = $cmd->fetch(PDO::FETCH_ASSOC);
-            if(!isset($row)) {
-                $erreur= json_encode(['error' => false, 'message' => 'mauvais identifiants de connexion']);
-                echo $erreur;
-            }
-            else {
+            var_dump($row);
+            if (!isset($row)) {
+                echo json_encode(['error' => true, 'message' => 'Mauvais identifiants de connexion']);
+            } else {
                 $token = $this->generateGuid();
                 $data = ['token' => $token];
                 
@@ -42,6 +40,7 @@ class UserController extends Controller {
                 $sql = "UPDATE " . $this->table_name . " SET token = :token WHERE mail = :mail";
                 $stmt = $this->getDB()->getPDO()->prepare($sql);
                 $stmt->execute(['token' => $token, 'mail' => $dataJSON->{"mail"}]);
+
                 echo json_encode($data);
             }
         }
@@ -59,10 +58,12 @@ class UserController extends Controller {
             $cmd->bindParam(":Mail", $dataJSON->{'mail'});
             $cmd->execute();
             $row = $cmd->fetch(PDO::FETCH_ASSOC);
+            
+            if ($row['count'] > 0) {
+                echo json_encode(['error' => true, 'message' => 'Un compte avec cet e-mail ' . $dataJSON->{"mail"} . ' existe déjà.']);
+                return;
+            }
 
-            if (isset($row)) {
-                echo json_encode(['error' => false, 'message' => 'Un compte avec cet e-mail ' . $dataJSON->{"mail"} .' existe déjà.']);
-            } else {
             // Crée un nouvel utilisateur
             $query = "INSERT INTO " . $this->table_name . " SET Mail=:Mail, Password=:Password, Pseudo=:Pseudo, IdRole=:IdRole";
             $cmd = $this->getPDO()->prepare($query);
@@ -79,7 +80,7 @@ class UserController extends Controller {
 
             if ($cmd->execute()) {
                 // Appel de la fonction d'envoi d'email après l'inscription réussie
-                $this->sendRegistrationEmail($dataJSON->{'mail'}, $dataJSON->{'name'});
+                //$this->sendRegistrationEmail($dataJSON->{'mail'}, $dataJSON->{'name'});
                 echo json_encode(["success" => true, "message" => "Inscription réussie."]);
             } else {
                 echo json_encode(["error" => true, "message" => "Impossible de créer l'utilisateur."]);
@@ -100,12 +101,10 @@ class UserController extends Controller {
             $check->setFetchMode(PDO::FETCH_ASSOC);
             $check->execute(['login' => $this->params[0]]);
             $user = $check->fetchAll();
-            if($user < 1) {
-                $erreur= "-x>Pas d'utilisateur à cette id";
-                echo json_encode($erreur);
-            }
-            else {
-                echo json_encode($user[0]["Mail"]);
+            if (empty($user)) {
+                echo json_encode(["error" => true, "message" => "Pas d'utilisateur avec cet ID"]);
+            } else {
+                echo json_encode($user[0]);
             }
         }
     }
@@ -134,7 +133,7 @@ class UserController extends Controller {
     public function updateUser($requestBody) {
         $data = json_decode($requestBody, true);
 
-        if (isset($data['IdUtilisateur']) && isset($data['Mail']) && isset($data['Pseudo']) && isset($data['IdRole'])) {
+        if (!empty($data['IdUtilisateur']) && !empty($data['Mail']) && !empty($data['Pseudo']) && !empty($data['IdRole'])) {
             $query = "UPDATE " . $this->table_name . " SET Mail = :Mail, Pseudo = :Pseudo, IdRole = :IdRole WHERE IdUtilisateur = :IdUtilisateur";
             $stmt = $this->getPDO()->prepare($query);
 
