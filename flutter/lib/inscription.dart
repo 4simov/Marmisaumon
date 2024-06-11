@@ -33,7 +33,6 @@ class _MyFormState extends State<Inscription> {
 
       try {
         print('Sending request to API...');
-        print(Uri.http(API_URL,'utilisateurs'));
         var response = await http.post(
           Uri.http(API_URL,'utilisateurs'), // URL correcte
           body: json.encode(payload),
