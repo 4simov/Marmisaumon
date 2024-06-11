@@ -28,7 +28,7 @@ class UserController extends Controller {
 
             
             $row = $cmd->fetch(PDO::FETCH_ASSOC);
-            if(empty($row)) {
+            if(!isset($row)) {
                 $erreur= json_encode(['error' => false, 'message' => 'mauvais identifiants de connexion']);
                 echo $erreur;
             }
@@ -39,7 +39,6 @@ class UserController extends Controller {
                 $sql = "UPDATE  " . $this->table_name . " SET token = :token WHERE mail = :mail";
                 $stmt =  $this->getDB()->getPDO()->prepare($sql);
                 $stmt->execute(['token' => $token, 'mail' => $dataJSON->{"mail"}]);
-
                 echo json_encode($data);
                 //Réponse=>renvoyer un nouveau token au client et l'inscrit dans la BDD ( dans les cookies ? )
             }
@@ -50,7 +49,6 @@ class UserController extends Controller {
      * @param $requestBody => correspond au body/json que doit contenir la requête
      */
     public function Inscription($dataJSON) {
-        echo $dataJSON->{'mail'};
         if (isset($dataJSON->{"mail"}) && isset($dataJSON->{"password"})) {
             // Vérifie si l'email existe déjà
             $query = "SELECT COUNT(*) as count FROM " . $this->table_name . " WHERE Mail = :Mail";
@@ -58,32 +56,32 @@ class UserController extends Controller {
             $cmd->bindParam(":Mail", $dataJSON->{'mail'});
             $cmd->execute();
             $row = $cmd->fetch(PDO::FETCH_ASSOC);
-
-            if (!empty($row)) {
+            var_dump($row);
+            if (isset($row)) {
                 echo json_encode(['error' => false, 'message' => 'Un compte avec cet e-mail ' . $dataJSON->{"mail"} .' existe déjà.']);
-                return;
-            }
+            } else {
 
-            // Crée un nouvel utilisateur
-            $query = "INSERT INTO " . $this->table_name . " SET Mail=:Mail, Password=:Password, Pseudo=:Pseudo, IdRole=:IdRole";
-            $cmd = $this->getPDO()->prepare($query);
+                // Crée un nouvel utilisateur
+                $query = "INSERT INTO " . $this->table_name . " SET Mail=:Mail, Password=:Password, Pseudo=:Pseudo, IdRole=:IdRole";
+                $cmd = $this->getPDO()->prepare($query);
 
-            // Hashage du mot de passe avant l'enregistrement
-            $password_hash = password_hash($dataJSON->{'password'}, PASSWORD_BCRYPT);
+                // Hashage du mot de passe avant l'enregistrement
+                $password_hash = password_hash($dataJSON->{'password'}, PASSWORD_BCRYPT);
 
-            
-            $role = RolesEnum::UTILISATEUR->value;
-            // Bind des valeurs
-            $cmd->bindParam(":Mail", $dataJSON->{'mail'});
-            $cmd->bindParam(":Password", $password_hash);
-            $cmd->bindParam(":Pseudo", $dataJSON->{'name'});
-            $cmd->bindParam(":IdRole", $role);
+                
+                $role = RolesEnum::UTILISATEUR->value;
+                // Bind des valeurs
+                $cmd->bindParam(":Mail", $dataJSON->{'mail'});
+                $cmd->bindParam(":Password", $password_hash);
+                $cmd->bindParam(":Pseudo", $dataJSON->{'name'});
+                $cmd->bindParam(":IdRole", $role);
 
-            if($cmd->execute()) {
-                echo json_encode(["success" => true, "message" => "Inscription réussie."]);
-            }
-            else {
-                echo json_encode(["error" => false, "message" => "Impossible de créer l'utilisateur."]);
+                if($cmd->execute()) {
+                    echo json_encode(["success" => true, "message" => "Inscription réussie."]);
+                }
+                else {
+                    echo json_encode(["error" => false, "message" => "Impossible de créer l'utilisateur."]);
+                }
             }
         } else {
             echo json_encode(["error" => false, "message" => "Données manquantes."]);
@@ -103,7 +101,7 @@ class UserController extends Controller {
             $user = $check->fetchAll();
             if($user < 1) {
                 $erreur= "-x>Pas d'utilisateur à cette id";
-                echo $erreur;
+                echo json_encode($erreur);
             }
             else {
                 echo json_encode($user[0]["Mail"]);
@@ -135,7 +133,7 @@ class UserController extends Controller {
     public function updateUser($requestBody) {
         $data = json_decode($requestBody, true);
 
-        if (!empty($data['IdUtilisateur']) && !empty($data['Mail']) && !empty($data['Pseudo']) && !empty($data['IdRole'])) {
+        if (isset($data['IdUtilisateur']) && isset($data['Mail']) && isset($data['Pseudo']) && isset($data['IdRole'])) {
             $query = "UPDATE " . $this->table_name . " SET Mail = :Mail, Pseudo = :Pseudo, IdRole = :IdRole WHERE IdUtilisateur = :IdUtilisateur";
             $stmt = $this->getPDO()->prepare($query);
 

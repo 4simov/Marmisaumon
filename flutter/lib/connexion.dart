@@ -29,7 +29,7 @@ class _MyFormState extends State<Connexion2> {
       try {
         print('Sending request to API...');
         var response = await http.post(
-          Uri.http(SUCCESS_MESSAGE,'utilisateur/login'), // URL correcte
+          Uri.http(API_URL,'utilisateurs/login'), // URL correcte
           body: json.encode(payload),
           headers: {
             'Content-Type': 'application/json',
@@ -40,6 +40,7 @@ class _MyFormState extends State<Connexion2> {
 
         print('Response received. Status code: ${response.statusCode}');
         if (response.statusCode == 200) {
+          print(json.decode(response.body));
           var token = json.decode(response.body)['token'];
           await _cookieManager.saveCookieToken(token);
           print(await _cookieManager.getCookieToken());
