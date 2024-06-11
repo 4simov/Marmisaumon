@@ -25,6 +25,7 @@ class Router {
      * Traduit l'url de façon à utiliser le bon endpoint à travers les controllers
      */
     public function dispatch($uri) {
+        ob_start();//Met en tampon l'exacution API
         $uriReplaceId = $this->replaceIdUrl($uri);
         if (array_key_exists($_SERVER['REQUEST_METHOD'] . $uriReplaceId, $this->routes)) {
             
@@ -48,7 +49,7 @@ class Router {
                 $reponse = $controller->$action($dataJson, $params[0]);//Exemple de résultat : UserController->getUserByEmail($dataJson)
             }
             else {
-                echo "Vous n'avez pas les droits nécessaires pour exécuter cette actions.";
+                echo json("Vous n'avez pas les droits nécessaires pour exécuter cette actions.");
             }
         }
         //Aucune route correspondant à l'url n'a été trouvé
@@ -56,6 +57,7 @@ class Router {
             echo "Vous êtes dans un endroit qui n'existe pas";
             //include __DIR__ .'/Errors/404.php';
         }
+        ob_end_flush();//Renvoie l'exécution API au client
     }
 
     /**
@@ -63,7 +65,6 @@ class Router {
      */
     function replaceIdUrl($url) : string {       
         $replaceId = preg_replace($this->motif, $this->remplacement, $url);
-        echo $replaceId;
         return $replaceId;
     }
 
@@ -73,7 +74,6 @@ class Router {
          if (preg_match_all($this->motif, $url, $params)) {
              $params = $params[1];
          }
-         var_dump($params);
          return $params;
     }
 }
