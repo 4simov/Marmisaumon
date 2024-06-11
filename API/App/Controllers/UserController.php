@@ -21,29 +21,29 @@ class UserController extends Controller {
      * $request->{nomDeLaVariableVoulue} => renvoie la donnée souhaitée
      */
     function login($dataJSON = null){
-        if ($dataJSON == null) {
-            echo json_encode(["error" => true, "message" => "Le requestBody est null"]);
-        } else {
-            $query = "SELECT * FROM " . $this->table_name . " WHERE mail = :mail AND password = :password";
-            $cmd = $this->getDB()->getPDO()->prepare($query);
-            $cmd->execute(['mail' => $dataJSON->{"mail"}, 'password' => $dataJSON->{"password"}]);
+        //Récupération hashage
+        $query = "SELECT * FROM " . $this->table_name . " WHERE mail = :mail";
+        $cmd = $this->getDB()->getPDO()->prepare($query);
+            $cmd->execute(['mail' => $dataJSON->{"mail"}]);
 
             $row = $cmd->fetch(PDO::FETCH_ASSOC);
-            var_dump($row);
-            if (!isset($row)) {
+            if (!$row) {
                 echo json_encode(['error' => true, 'message' => 'Mauvais identifiants de connexion']);
             } else {
-                $token = $this->generateGuid();
-                $data = ['token' => $token];
-                
-                // Stockage dans la base du nouveau token
-                $sql = "UPDATE " . $this->table_name . " SET token = :token WHERE mail = :mail";
-                $stmt = $this->getDB()->getPDO()->prepare($sql);
-                $stmt->execute(['token' => $token, 'mail' => $dataJSON->{"mail"}]);
-
-                echo json_encode($data);
+                $hash = $row["Password"];
+                if (!password_verify($dataJSON->{"password"}, $hash)) {
+                    echo json_encode(['error' => true, 'message' => 'Mauvais identifiants de connexion']);
+                } else {
+                    $token = $this->generateGuid();
+                    $data = ['token' => $token];
+                    // Stockage dans la base du nouveau token
+                    $sql = "UPDATE " . $this->table_name . " SET token = :token WHERE mail = :mail";
+                    $stmt = $this->getDB()->getPDO()->prepare($sql);
+                    $stmt->execute(['token' => $token, 'mail' => $dataJSON->{"mail"}]);
+    
+                    echo json_encode($data);
+                }
             }
-        }
     }
 
     /**
