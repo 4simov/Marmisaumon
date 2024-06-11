@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+// ignore: unnecessary_import
 import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'header.dart'; // Importez votre widget Header ici
