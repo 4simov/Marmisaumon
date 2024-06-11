@@ -16,7 +16,8 @@ class Router {
     }
 
     public function dispatch($uri) {
-        ob_start(); // Start output buffering
+        ob_start();//Met en tampon l'exacution API
+
         $uriReplaceId = $this->replaceIdUrl($uri);
         if (array_key_exists($_SERVER['REQUEST_METHOD'] . $uriReplaceId, $this->routes)) {
             $controller = $this->routes[$_SERVER['REQUEST_METHOD'] . $uriReplaceId]['controller'];
@@ -28,27 +29,36 @@ class Router {
             $dataJson = json_decode($requestBody);
             $controller = new $controller($requestBody, $rightEndpoint, $params);
 
-            if ($controller->isRigth()) {
-                $controller->$action($dataJson, $params[0]);
-            } else {
-                echo json_encode(["error" => true, "message" => "Vous n'avez pas les droits nécessaires pour exécuter cette action."]);
+            if($controller->isRigth()) {
+                $reponse = $controller->$action($dataJson, $params[0]);//Exemple de résultat : UserController->getUserByEmail($dataJson)
+            }
+            else {
+                echo json("Vous n'avez pas les droits nécessaires pour exécuter cette actions.");
             }
         } else {
             echo json_encode(["error" => true, "message" => "Vous êtes dans un endroit qui n'existe pas."]);
         }
-        ob_end_flush(); // Send the output buffer and turn off output buffering
+      
+        //Aucune route correspondant à l'url n'a été trouvé
+        else {
+            echo "Vous êtes dans un endroit qui n'existe pas";
+            //include __DIR__ .'/Errors/404.php';
+        }
+        ob_end_flush();//Renvoie l'exécution API au client
     }
 
     function replaceIdUrl($url) : string {       
-        return preg_replace($this->motif, $this->remplacement, $url);
+        $replaceId = preg_replace($this->motif, $this->remplacement, $url);
+        return $replaceId;
     }
 
     function getParameters($url) : Array{
-        $params = null;
-        if (preg_match_all($this->motif, $url, $params)) {
-            $params = $params[1];
-        }
-        return $params;
+         //Stocke les id glissées dnas l'url-
+         $params = null;
+         if (preg_match_all($this->motif, $url, $params)) {
+             $params = $params[1];
+         }
+         return $params;
     }
 }
 ?>

@@ -10,7 +10,7 @@ use MyEnum\RolesEnum;
 $router = new Router();
 
 // Ajoutez les routes avec les méthodes HTTP appropriées 
-$router->addRoute(HttpEnum::GET->value .'/utilisateurs', UserController::class, 'getUserByEmail', RolesEnum::ADMIN);
+$router->addRoute(HttpEnum::GET->value .'/utilisateurs', UserController::class, 'getUserByEmail', RolesEnum::INVITE);
 $router->addRoute(HttpEnum::GET->value .'/utilisateurs/id', UserController::class, 'getUserById', RolesEnum::ADMIN);
 $router->addRoute(HttpEnum::POST->value . '/utilisateurs', UserController::class, 'Inscription', RolesEnum::INVITE);
 $router->addRoute(HttpEnum::POST->value . '/utilisateurs/login', UserController::class, 'login', RolesEnum::INVITE);

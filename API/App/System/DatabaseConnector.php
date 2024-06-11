@@ -18,7 +18,7 @@ class DatabaseConnector {
             $this->pdo = new PDO("mysql:host=localhost;dbname=marmisaumon", "root", "root");
         }
         catch (PDOException $e) {
-            echo $e->getMessage();
+            echo json_encode($e->getMessage());
         }
     }
     public function getPDO() {
