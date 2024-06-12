@@ -40,7 +40,6 @@ class RecipeDetailsPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-
                         SizedBox(
                           height: 200,
                           child: ListView(
@@ -75,7 +74,7 @@ class RecipeDetailsPage extends StatelessWidget {
                           ],
                         ),
                         SizedBox(height: 20),
-                        section('Étapes', recipe.steps.join('\n'), blueColor, textColor),
+                        stepsSection('Étapes', recipe.steps, blueColor, textColor),
                         SizedBox(height: 20),
                         section('Commentaires', recipe.comments.join('\n'), blueColor, textColor),
                         SizedBox(height: 20),
@@ -114,6 +113,48 @@ class RecipeDetailsPage extends StatelessWidget {
           Text(
             content,
             style: TextStyle(fontSize: 16.0, color: textColor),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget stepsSection(String title, List<String> steps, Color color, Color textColor) {
+    return Container(
+      padding: EdgeInsets.all(16.0),
+      margin: EdgeInsets.symmetric(vertical: 10.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15.0),
+        color: color,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
+          ),
+          SizedBox(height: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: steps.asMap().entries.map((entry) {
+              int index = entry.key;
+              String step = entry.value;
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text(
+                  'Étape ${index + 1}: $step',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: textColor,
+                  ),
+                ),
+              );
+            }).toList(),
           ),
         ],
       ),
