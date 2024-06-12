@@ -102,22 +102,23 @@ class UserController extends Controller {
         }
     }
 
-    public function readUser($requestBody) {
-        $data = json_decode($requestBody, true);
-        if (isset($data['IdUtilisateur'])) {
-            $query = "SELECT * FROM " . $this->table_name . " WHERE IdUtilisateur = ?";
-            $stmt = $this->getPDO()->prepare($query);
-            $stmt->bindParam(1, $data['IdUtilisateur']);
-            $stmt->execute();
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    public function getInfoUtilisateur($requestBody) {
+        $token = getallheaders()['Authorization'] ?? null;
 
-            if ($user) {
-                echo json_encode($user);
+        if ($token) {
+            $query = "SELECT * FROM " . $this->table_name . " WHERE Token = :token";
+            $cmd = $this->getDB()->getPDO()->prepare($query);
+            $cmd->bindParam(":token", $token);
+            $cmd->execute();
+
+            $row = $cmd->fetch(PDO::FETCH_ASSOC);
+            if (empty($row)) {
+                echo json_encode(["error" => true, "message" => "Token invalide"]);
             } else {
-                echo json_encode(["error" => true, "message" => "Utilisateur non trouvé."]);
+                echo json_encode($row);
             }
         } else {
-            echo json_encode(["error" => true, "message" => "ID utilisateur manquant."]);
+            echo json_encode(["error" => true, "message" => "Token manquant"]);
         }
     }
 
