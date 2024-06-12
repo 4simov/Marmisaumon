@@ -100,6 +100,8 @@ class _HeaderWidgetState extends State<HeaderWidget> {
               if (role < RoleEnum.UTILISATEUR.value)
                 _buildMenuItem(
                     context, 'Inscription - Connexion', '/connexion'),
+              if (role >= RoleEnum.UTILISATEUR.value)
+                _buildMenuItem(context, 'Déconnexion', '', isLogout: true),
             ],
           ),
         ],
