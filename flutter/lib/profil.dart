@@ -54,12 +54,12 @@ class _ProfilePageState extends State<ProfilePage> {
             'Authorization': token
           });
       print('Response received. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      print(json.decode(response.body)['Pseudo']);
       if (response.statusCode == 200) {
         setState(() {
-          _nameController.text = json.decode(
-              response.body)['Pseudo'] ?? '';
-          _emailController.text = json.decode(
-              response.body)["Mail"] ?? '';
+          _nameController.text = json.decode(response.body)['Pseudo'] ?? '';
+          _emailController.text = json.decode(response.body)["Mail"] ?? '';
         });
       } else {
         print('Erreur de récupération info raté');

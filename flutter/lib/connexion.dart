@@ -44,6 +44,7 @@ class _MyFormState extends State<Connexion2> {
           var token = json.decode(response.body)['token'];
           await _cookieManager.saveCookieToken(token);
           print(await _cookieManager.getCookieToken());
+          Navigator.pushNamed(context, '/');
         } else {
           print('Erreur de connexion: ${response.statusCode}');
         }

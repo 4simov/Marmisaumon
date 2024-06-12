@@ -1,6 +1,7 @@
 <?php
 
 namespace Controllers;
+
 use MiddlewareHome\Right;
 use MyEnum\RolesEnum;
 use PDO;
@@ -14,15 +15,10 @@ require 'vendor/autoload.php';
  */
 class UserController extends Controller {
     private $table_name = "Utilisateur";
-    
-    /**
-     * 
-     * @param $dataJSON => correspond au body/json que doit contenir la requête
-     * $request->{nomDeLaVariableVoulue} => renvoie la donnée souhaitée
-     */
+
     function login($dataJSON = null){
         //Récupération hashage
-        $query = "SELECT * FROM " . $this->table_name . " WHERE mail = :mail";
+        $query = "SELECT * FROM " . $this->table_name . " WHERE Mail = :mail";
         $cmd = $this->getDB()->getPDO()->prepare($query);
             $cmd->execute(['mail' => $dataJSON->{"mail"}]);
 
@@ -37,7 +33,7 @@ class UserController extends Controller {
                     $token = $this->generateGuid();
                     $data = ['token' => $token];
                     // Stockage dans la base du nouveau token
-                    $sql = "UPDATE " . $this->table_name . " SET token = :token WHERE mail = :mail";
+                    $sql = "UPDATE " . $this->table_name . " SET Token = :token WHERE mail = :mail";
                     $stmt = $this->getDB()->getPDO()->prepare($sql);
                     $stmt->execute(['token' => $token, 'mail' => $dataJSON->{"mail"}]);
                     echo json_encode($data);
@@ -45,11 +41,8 @@ class UserController extends Controller {
             }
     }
 
-    /**
-     * Inscription d'un utilisateur
-     * @param $dataJSON => correspond au body/json que doit contenir la requête
-     */
     public function Inscription($dataJSON) {
+        ob_start(); // Start output buffering
         if (isset($dataJSON->{"mail"}) && isset($dataJSON->{"password"})) {
             // Vérifie si l'email existe déjà
             $query = "SELECT COUNT(*) as count FROM " . $this->table_name . " WHERE Mail = :Mail";
@@ -57,37 +50,38 @@ class UserController extends Controller {
             $cmd->bindParam(":Mail", $dataJSON->{'mail'});
             $cmd->execute();
             $row = $cmd->fetch(PDO::FETCH_ASSOC);
-            
+    
             if ($row['count'] > 0) {
-                echo json_encode(['error' => true, 'message' => 'Un compte avec cet e-mail ' . $dataJSON->{"mail"} . ' existe déjà.']);
-                return;
-            }
-
-            // Crée un nouvel utilisateur
-            $query = "INSERT INTO " . $this->table_name . " SET Mail=:Mail, Password=:Password, Pseudo=:Pseudo, IdRole=:IdRole";
-            $cmd = $this->getPDO()->prepare($query);
-
-            // Hashage du mot de passe avant l'enregistrement
-            $password_hash = password_hash($dataJSON->{'password'}, PASSWORD_BCRYPT);
-            $role = RolesEnum::UTILISATEUR->value;
-            
-            // Bind des valeurs
-            $cmd->bindParam(":Mail", $dataJSON->{'mail'});
-            $cmd->bindParam(":Password", $password_hash);
-            $cmd->bindParam(":Pseudo", $dataJSON->{'name'});
-            $cmd->bindParam(":IdRole", $role);
-
-            if ($cmd->execute()) {
-                // Appel de la fonction d'envoi d'email après l'inscription réussie
-                //$this->sendRegistrationEmail($dataJSON->{'mail'}, $dataJSON->{'name'});
-                echo json_encode(["success" => true, "message" => "Inscription réussie."]);
+                $result = ['error' => true, 'message' => 'Un compte avec cet e-mail ' . $dataJSON->{"mail"} . ' existe déjà.'];
             } else {
-                echo json_encode(["error" => true, "message" => "Impossible de créer l'utilisateur."]);
+                // Crée un nouvel utilisateur
+                $query = "INSERT INTO " . $this->table_name . " SET Mail=:Mail, Password=:Password, Pseudo=:Pseudo, IdRole=:IdRole";
+                $cmd = $this->getPDO()->prepare($query);
+    
+                // Hashage du mot de passe avant l'enregistrement
+                $password_hash = password_hash($dataJSON->{'password'}, PASSWORD_BCRYPT);
+                $role = RolesEnum::UTILISATEUR->value;
+    
+                // Bind des valeurs
+                $cmd->bindParam(":Mail", $dataJSON->{'mail'});
+                $cmd->bindParam(":Password", $password_hash);
+                $cmd->bindParam(":Pseudo", $dataJSON->{'name'});
+                $cmd->bindParam(":IdRole", $role);
+    
+                if ($cmd->execute()) {
+                    // Appel de la fonction d'envoi d'email après l'inscription réussie
+                    $result = $this->sendRegistrationEmail($dataJSON->{'mail'}, $dataJSON->{'name'});
+                } else {
+                    $result = ["error" => true, "message" => "Impossible de créer l'utilisateur."];
+                }
             }
         } else {
-            echo json_encode(["error" => true, "message" => "Données manquantes."]);
+            $result = ["error" => true, "message" => "Données manquantes."];
         }
+        ob_end_clean(); 
+        echo json_encode($result);
     }
+    
 
     function getUserById($requestBody) {
         if ($requestBody == null) {
@@ -108,10 +102,9 @@ class UserController extends Controller {
         }
     }
 
-    // Lire les informations d'un utilisateur par ID
     public function getInfoUtilisateur($requestBody) {
         $token = getallheaders()['Authorization'] ?? null;
-        
+
         if ($token) {
             $query = "SELECT * FROM " . $this->table_name . " WHERE Token = :token";
             $cmd = $this->getDB()->getPDO()->prepare($query);
@@ -129,7 +122,6 @@ class UserController extends Controller {
         }
     }
 
-    // Mettre à jour les informations d'un utilisateur
     public function updateUser($requestBody) {
         $data = json_decode($requestBody, true);
 
@@ -177,7 +169,6 @@ class UserController extends Controller {
         }
     }
 
-    // Modifier le mot de passe d'un utilisateur
     public function updatePassword($requestBody) {
         $data = json_decode($requestBody, true);
 
@@ -202,7 +193,6 @@ class UserController extends Controller {
         }
     }
 
-    // Supprimer un utilisateur
     public function deleteUser($requestBody) {
         $data = json_decode($requestBody, true);
         if (isset($data['IdUtilisateur'])) {
@@ -219,8 +209,9 @@ class UserController extends Controller {
             echo json_encode(["error" => true, "message" => "ID utilisateur manquant."]);
         }
     }
-    
+
     public function getRole($requestBody) {
+        $data = json_decode($requestBody, true);
         $token = getallheaders()['Authorization'] ?? null;
 
         if ($token) {
@@ -230,6 +221,7 @@ class UserController extends Controller {
             $cmd->execute();
 
             $row = $cmd->fetch(PDO::FETCH_ASSOC);
+
             if (empty($row)) {
                 echo json_encode(["error" => true, "message" => "Token invalide"]);
             } else {
@@ -241,33 +233,40 @@ class UserController extends Controller {
     }
 
     function sendRegistrationEmail($userEmail, $userName) {
+        ob_start(); // Start output buffering
         $mail = new PHPMailer(true);
-
+    
         try {
             // Configuration du serveur SMTP
             $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
+            $mail->Host = 'smtp-mail.outlook.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'marmisaumoncube3@gmail.com'; // Votre adresse e-mail Gmail
-            $mail->Password = '*CuBe3cEsI*'; // Votre mot de passe Gmail ou mot de passe d'application
+            $mail->Username = 'benchclokz@outlook.fr'; // Votre adresse e-mail Outlook
+            $mail->Password = '*CuBe3cEsI*'; // Votre mot de passe
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
-
+    
             // Destinataires
-            $mail->setFrom('marmisaumoncube3@gmail.com', 'Equipe Administrative Marmisaumon');
+            $mail->setFrom('benchclokz@outlook.fr', 'Equipe Administrative Marmisaumon');
             $mail->addAddress($userEmail, $userName);
-
+    
             // Contenu de l'e-mail
             $mail->isHTML(true);
             $mail->Subject = 'Bienvenue sur Marmisaumon !';
             $mail->Body    = 'Merci de vous être enregistré sur Marmisaumon, ' . $userName . '!';
             $mail->AltBody = 'Merci de vous être enregistré sur Marmisaumon, ' . $userName . '!';
-
+    
             $mail->send();
-            // Suppression de l'écho pour éviter de mélanger avec les réponses JSON
+            // Ajout d'un message de succès pour le débogage
+            $result = ['success' => true, 'message' => 'Message envoyé'];
         } catch (Exception $e) {
-            // Log de l'erreur si besoin, sans écho
+            // Log de l'erreur
+            error_log("Erreur d'envoi de l'e-mail: {$mail->ErrorInfo}");
+            $result = ['success' => false, 'message' => "Error, mail pas envoyé: {$mail->ErrorInfo}"];
         }
-    }
+    
+        ob_end_clean();
+        return $result;
+    }    
 }
 ?>

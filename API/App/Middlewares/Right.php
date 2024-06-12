@@ -17,7 +17,7 @@ class Right {
         $token = $all_headers = getallheaders()['Authorization'] ?? null;
         $user = [];
         if($token != null) {
-            $query = "SELECT * FROM utilisateur WHERE Token = :token";
+            $query = "SELECT * FROM Utilisateur WHERE Token = :token";
             $check = $pdo->prepare($query);
             $check->execute(['token' => $token]);
             $user = $check->fetch(PDO::FETCH_ASSOC);
