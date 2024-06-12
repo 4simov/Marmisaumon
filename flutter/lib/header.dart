@@ -7,12 +7,13 @@ import 'package:marmisaumon/Enums/roleEnum.dart';
 import 'package:marmisaumon/Utils/cookieManager.dart';
 
 import 'Utils/constants.dart';
+import 'package:marmisaumon/Enums/roleEnum.dart';
+import 'Utils/cookieManager.dart';
 
 class HeaderWidget extends StatefulWidget {
   const HeaderWidget({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _HeaderWidgetState createState() => _HeaderWidgetState();
 }
 
@@ -28,6 +29,38 @@ class _HeaderWidgetState extends State<HeaderWidget> {
             role = value;
           })
     });
+  
+  }
+
+  final CookieManager _cookieManager = CookieManager();
+
+  Future<void> _showLogoutConfirmation(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button for close dialog!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmation'),
+          content: const Text('Voulez-vous vraiment vous déconnecter ?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Annuler'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Déconnexion'),
+              onPressed: () async {
+                await _cookieManager.deleteCookie('token');
+                Navigator.of(context).pop();
+                Navigator.pushNamedAndRemoveUntil(context, '/connexion', (Route<dynamic> route) => false);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -74,7 +107,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
     );
   }
 
-  Widget _buildMenuItem(BuildContext context, String title, String route) {
+  Widget _buildMenuItem(BuildContext context, String title, String route, {bool isLogout = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: MouseRegion(
@@ -90,7 +123,11 @@ class _HeaderWidgetState extends State<HeaderWidget> {
         },
         child: InkWell(
           onTap: () {
-            Navigator.pushNamed(context, route);
+            if (isLogout) {
+              _showLogoutConfirmation(context);
+            } else {
+              Navigator.pushNamed(context, route);
+            }
           },
           child: Text(
             title,
