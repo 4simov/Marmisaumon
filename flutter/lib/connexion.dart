@@ -16,6 +16,7 @@ class _MyFormState extends State<Connexion2> {
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -40,7 +41,6 @@ class _MyFormState extends State<Connexion2> {
 
         print('Response received. Status code: ${response.statusCode}');
         if (response.statusCode == 200) {
-          print(json.decode(response.body));
           var token = json.decode(response.body)['token'];
           await _cookieManager.saveCookieToken(token);
           print(await _cookieManager.getCookieToken());

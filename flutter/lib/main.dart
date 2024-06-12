@@ -10,6 +10,7 @@ import 'inscription.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'ajoutIngrédient.dart';
 import 'demandeIngredient.dart';
+import 'deconnexion.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
         '/inscription': (context) => Inscription(), // Page d'inscription
         'ajoutIngredient': (context) => const AddIngredientPage(),
         '/admin': (context) => const AdminPage(),
+        '/deconnexion': (context) => Deconnexion(),
       },
     );
   }

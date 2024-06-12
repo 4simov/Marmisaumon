@@ -40,7 +40,6 @@ class UserController extends Controller {
                     $sql = "UPDATE " . $this->table_name . " SET token = :token WHERE mail = :mail";
                     $stmt = $this->getDB()->getPDO()->prepare($sql);
                     $stmt->execute(['token' => $token, 'mail' => $dataJSON->{"mail"}]);
-    
                     echo json_encode($data);
                 }
             }
@@ -110,22 +109,23 @@ class UserController extends Controller {
     }
 
     // Lire les informations d'un utilisateur par ID
-    public function readUser($requestBody) {
-        $data = json_decode($requestBody, true);
-        if (isset($data['IdUtilisateur'])) {
-            $query = "SELECT * FROM " . $this->table_name . " WHERE IdUtilisateur = ?";
-            $stmt = $this->getPDO()->prepare($query);
-            $stmt->bindParam(1, $data['IdUtilisateur']);
-            $stmt->execute();
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    public function getInfoUtilisateur($requestBody) {
+        $token = getallheaders()['Authorization'] ?? null;
+        
+        if ($token) {
+            $query = "SELECT * FROM " . $this->table_name . " WHERE Token = :token";
+            $cmd = $this->getDB()->getPDO()->prepare($query);
+            $cmd->bindParam(":token", $token);
+            $cmd->execute();
 
-            if ($user) {
-                echo json_encode($user);
+            $row = $cmd->fetch(PDO::FETCH_ASSOC);
+            if (empty($row)) {
+                echo json_encode(["error" => true, "message" => "Token invalide"]);
             } else {
-                echo json_encode(["error" => true, "message" => "Utilisateur non trouvé."]);
+                echo json_encode($row);
             }
         } else {
-            echo json_encode(["error" => true, "message" => "ID utilisateur manquant."]);
+            echo json_encode(["error" => true, "message" => "Token manquant"]);
         }
     }
 
@@ -221,7 +221,6 @@ class UserController extends Controller {
     }
     
     public function getRole($requestBody) {
-        $data = json_decode($requestBody, true);
         $token = getallheaders()['Authorization'] ?? null;
 
         if ($token) {
@@ -231,7 +230,6 @@ class UserController extends Controller {
             $cmd->execute();
 
             $row = $cmd->fetch(PDO::FETCH_ASSOC);
-
             if (empty($row)) {
                 echo json_encode(["error" => true, "message" => "Token invalide"]);
             } else {
