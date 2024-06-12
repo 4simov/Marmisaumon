@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:js';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
@@ -21,45 +20,18 @@ class _HeaderWidgetState extends State<HeaderWidget> {
   String _hoveredItem = '';
   int role = 1;
 
-  @override
-  Widget build(BuildContext context) {
-    getListHeaderRole(context).then((value) => {
+  @protected
+  @mustCallSuper
+  void initState() {
+    getListHeaderRole().then((value) => {
           setState(() {
             role = value;
           })
-        });
-    /*return FutureBuilder(
-      future: getListHeaderRole(context),
-      initialData: "Loading text..",
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        return Container(
-      color: const Color(0xFF001B2E),
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        children: [
-          const Text(
-            'Marmisaumon',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 20.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget> [
-              _buildMenuItem(context, 'Accueil', '/'),
-              _buildMenuItem(context, 'Recettes', '/affichage-recette'),
-              _buildMenuItem(context, 'Contact', '/contact'),
-              _buildMenuItem(context, 'Inscription - Connexion', '/connexion')
-            ],
-          ),
-        ],
-      ));
-      }
-      );
-  }*/
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       color: const Color(0xFF001B2E),
       padding: const EdgeInsets.all(20.0),
@@ -132,7 +104,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
     );
   }
 
-  Future<int> getListHeaderRole(BuildContext context) async {
+  Future<int> getListHeaderRole() async {
     final CookieManager cookieManager = CookieManager();
     var token = await cookieManager.getCookieToken() ?? '';
     var role = 1;
@@ -158,20 +130,5 @@ class _HeaderWidgetState extends State<HeaderWidget> {
       role = 1;
     }
     return role;
-    /*return <Widget> [
-              _buildMenuItem(context, 'Accueil', '/'),
-              _buildMenuItem(context, 'Recettes', '/affichage-recette'),
-              if(role >= RoleEnum.UTILISATEUR.value )
-                _buildMenuItem(context, 'Créer une recette', '/creation-recette'),//montrer que pour invité
-              if(role >= RoleEnum.UTILISATEUR.value )
-                _buildMenuItem(context, 'Mon compte', '/profil'),//montrer que pour utilisateur pour utilisateur 
-              _buildMenuItem(context, 'Contact', '/contact'),
-              if(role >= RoleEnum.UTILISATEUR.value )
-                _buildMenuItem(context, 'Nouvel ingrédient', 'ajoutIngredient'),//montrer que pour Utilisateur ou plus
-              if(role >= RoleEnum.ADMIN.value )
-                _buildMenuItem(context, 'Admin', '/admin'),//montrer que pour l'admin
-              if(role < RoleEnum.UTILISATEUR.value)
-                _buildMenuItem(context, 'Inscription - Connexion', '/connexion'),
-            ];*/
   }
 }
