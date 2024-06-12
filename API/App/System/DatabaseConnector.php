@@ -14,7 +14,8 @@ class DatabaseConnector {
 
     public function __construct() {
         try {
-            self::$pdo = new PDO("mysql:host=localhost;dbname=marmisaumon", "root", "root");
+            //self::$pdo = new PDO("mysql:host=localhost;dbname=marmisaumon", "root", "");
+            self::$pdo = new PDO("mysql:host=localhost;dbname=marmisaumon", "root", "");
             // echo "Connexion à la base de données réussie.\n";
         }
         catch (PDOException $e) {

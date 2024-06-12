@@ -46,6 +46,7 @@ class _MyFormState extends State<Inscription> {
         print('Response received. Status code: ${response.statusCode}');
         if (response.statusCode == 200) {
           print(json.decode(response.body));
+          Navigator.pushNamed(context, '/connexion');
         } else {
           print('Erreur de connexion: ${response.statusCode}');
         }
@@ -155,7 +156,7 @@ class _MyFormState extends State<Inscription> {
                       ),
                       const SizedBox(height: 20.0),
                       ElevatedButton(
-                        onPressed: _submitForm,
+                        onPressed:_submitForm,
                         child: const Text('S\'inscrire'),
                       ),
                     ],

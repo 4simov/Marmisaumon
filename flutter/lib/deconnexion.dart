@@ -6,7 +6,7 @@ class Deconnexion extends StatelessWidget {
 
   Future<void> _logout(BuildContext context) async {
     await _cookieManager.deleteCookie('token');
-    Navigator.pushNamedAndRemoveUntil(context, '/connexion', (Route<dynamic> route) => false);
+    Navigator.pushNamedAndRemoveUntil(context, '/connexion', (Route<dynamic> route) => false);    
   }
 
   @override
