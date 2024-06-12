@@ -1,6 +1,6 @@
 enum RoleEnum {
-  INVITE(0),
-  UTILISATEUR(1),
+  INVITE(1),
+  UTILISATEUR(2),
   MODERATEUR(3),
   ADMIN(4);
 
