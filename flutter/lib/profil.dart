@@ -19,13 +19,17 @@ class _ProfilePageState extends State<ProfilePage> {
   //Permet de savoir quand que on est en mode editable ou pas
   bool _isEditing = false;
   //Récupere les informations de l'utilisateur depuis la base de données !!!!!!
-  final TextEditingController _nameController =
-      TextEditingController(text: 'John Doe');
-  final TextEditingController _emailController =
-      TextEditingController(text: 'johndoe@example.com');
-  final TextEditingController _cityController =
-      TextEditingController(text: 'New York');
+  // final TextEditingController _nameController =
+  //     TextEditingController(text: 'John Doe');
+  // final TextEditingController _emailController =
+  //     TextEditingController(text: 'johndoe@example.com');
+  // final TextEditingController _cityController =
+  //     TextEditingController(text: 'New York');
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _cityController = TextEditingController();
 
+  
   void initState() {
     super.initState();
     _loadUserData();
@@ -44,7 +48,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Column(
+        child: Column(  
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const HeaderWidget(), // Affichez le header ici
