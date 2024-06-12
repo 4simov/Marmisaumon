@@ -15,6 +15,7 @@ $router->addRoute(HttpEnum::GET->value .'/utilisateurs/id', UserController::clas
 $router->addRoute(HttpEnum::POST->value . '/utilisateurs', UserController::class, 'Inscription', RolesEnum::INVITE);
 $router->addRoute(HttpEnum::POST->value . '/utilisateurs/login', UserController::class, 'login', RolesEnum::INVITE);
 $router->addRoute(HttpEnum::GET->value .'/utilisateurs/role', UserController::class, 'getRole', RolesEnum::INVITE);
+$router->addRoute(HttpEnum::GET->value . '/utilisateurs/infos', UserController::class, 'getInfoUtilisateur', RolesEnum::UTILISATEUR);
 //$router->addRoute(HttpEnum::GET->value . '/utilisateur/profile', UserController::class, 'readUser', RolesEnum::INVITE);
 //$router->addRoute(HttpEnum::PUT->value . '/updateUser', UserController::class, 'updateUser', RolesEnum::UTILISATEUR);
 //$router->addRoute(HttpEnum::PUT->value . '/updatePassword', UserController::class, 'updatePassword', RolesEnum::UTILISATEUR);

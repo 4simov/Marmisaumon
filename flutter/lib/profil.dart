@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:marmisaumon/Utils/constants.dart';
+import 'package:http/http.dart' as http;
+import 'package:marmisaumon/Utils/cookieManager.dart';
 import 'header.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,28 +32,48 @@ class _ProfilePageState extends State<ProfilePage> {
   //     TextEditingController(text: 'New York');
   TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
-  TextEditingController _cityController = TextEditingController();
 
-  
   void initState() {
     super.initState();
     _loadUserData();
   }
 
   Future<void> _loadUserData() async {
+    final CookieManager cookieManager = CookieManager();
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _nameController.text = prefs.getString('name') ?? 'John Doe';
-      _emailController.text = prefs.getString('email') ?? 'johndoe@example.com';
-      _cityController.text = prefs.getString('city') ?? 'New York';
-    });
+    var token = await cookieManager.getCookieToken() ?? '';
+
+    try {
+      print('Sending request to API...');
+      var response = await http
+          .get(Uri.http(API_URL, '/utilisateurs/infos'), // URL correcte
+              headers: {
+            "Access-Control-Allow-Origin": "*",
+            'Content-Type': 'application/json',
+            'Accept': '*/*',
+            'Authorization': token
+          });
+      print('Response received. Status code: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        setState(() {
+          _nameController.text = json.decode(
+              response.body)['Pseudo'] ?? '';
+          _emailController.text = json.decode(
+              response.body)["Mail"] ?? '';
+        });
+      } else {
+        print('Erreur de récupération info raté');
+      }
+    } catch (e) {
+      print('Exception: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Column(  
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const HeaderWidget(), // Affichez le header ici
@@ -64,13 +89,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Center(
-                        child: CircleAvatar(
-                          radius: 60.0,
-                          backgroundImage: AssetImage(
-                              'assets/profile_image.jpg'), // Remplacez par l'image de profil
-                        ),
-                      ),
                       const SizedBox(height: 20.0),
                       //Condition pour savoir si on est en mode editable pour afficher le nom ou pas
                       _isEditing
@@ -102,19 +120,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                       const SizedBox(height: 8.0),
                       //Condition pour savoir si on est en mode editable pour afficher la ville ou pas
-                      _isEditing
-                          ? TextField(
-                              controller: _cityController,
-                              decoration: const InputDecoration(
-                                labelText: 'Ville',
-                              ),
-                            )
-                          : Text(
-                              'Ville: ${_cityController.text}',
-                              style: const TextStyle(fontSize: 16.0),
-                            ),
                       const SizedBox(height: 20.0),
-                      Center(
+                      /*Center(
                         child: ElevatedButton(
                           onPressed: () {
                             setState(() {
@@ -125,7 +132,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               ? 'Enregistrer'
                               : 'Modifier le profil'),
                         ),
-                      ),
+                      ),*/
                     ],
                   ),
                 ),
