@@ -4,6 +4,7 @@ import 'header.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'Utils/cookieManager.dart';
+import 'package:shared_preferences/shared_preferences.dart';  
 
 class Connexion2 extends StatefulWidget {
   @override
@@ -41,9 +42,20 @@ class _MyFormState extends State<Connexion2> {
         print('Response received. Status code: ${response.statusCode}');
         if (response.statusCode == 200) {
           print(json.decode(response.body));
+
+          var responseBody = json.decode(response.body);
           var token = json.decode(response.body)['token'];
+          var userData = responseBody['user'];
+
+
           await _cookieManager.saveCookieToken(token);
           print(await _cookieManager.getCookieToken());
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('name', userData['name']);
+          await prefs.setString('email', userData['email']);
+          await prefs.setString('city', userData['city']);
+
+
         } else {
           print('Erreur de connexion: ${response.statusCode}');
         }
@@ -80,11 +92,11 @@ class _MyFormState extends State<Connexion2> {
                       children: [
                         TextFormField(
                           decoration: const InputDecoration(
-                            labelText: 'Pseudo',
+                            labelText: 'Adresse e-mail',
                           ),
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return 'Veuillez entrer votre pseudo';
+                              return 'Veuillez entrer votre adresse e-mail';
                             }
                             return null;
                           },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'header.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MaterialApp(
@@ -24,6 +25,20 @@ class _ProfilePageState extends State<ProfilePage> {
       TextEditingController(text: 'johndoe@example.com');
   final TextEditingController _cityController =
       TextEditingController(text: 'New York');
+
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _nameController.text = prefs.getString('name') ?? 'John Doe';
+      _emailController.text = prefs.getString('email') ?? 'johndoe@example.com';
+      _cityController.text = prefs.getString('city') ?? 'New York';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
