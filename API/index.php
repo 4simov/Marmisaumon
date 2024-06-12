@@ -11,9 +11,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 use App\Routes;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
+use System\DatabaseConnector;
 
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/App/Routes.php';
+
+ob_start(); 
+new DatabaseConnector(); // Initialisation de la connexion à la base de données
+DatabaseConnector::InitDatabase(); // Appel de l'initialisation de la base de données
+ob_end_clean();
 
 $uri = $_SERVER['REQUEST_URI'];
 
@@ -21,3 +27,4 @@ $request = ServerRequest::fromGlobals();
 $response = new Response();
 
 $router->dispatch($request->getUri()->getPath());
+?>

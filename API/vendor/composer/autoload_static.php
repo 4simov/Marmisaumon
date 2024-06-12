@@ -25,6 +25,7 @@ class ComposerStaticInit913950ad60dd11bbcdf3b8f3c8b0c052
         array (
             'Psr\\Http\\Message\\' => 17,
             'PhpOption\\' => 10,
+            'PHPMailer\\PHPMailer\\' => 20,
         ),
         'M' => 
         array (
@@ -75,6 +76,10 @@ class ComposerStaticInit913950ad60dd11bbcdf3b8f3c8b0c052
         'PhpOption\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoption/phpoption/src/PhpOption',
+        ),
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
         ),
         'MyEnum\\' => 
         array (
