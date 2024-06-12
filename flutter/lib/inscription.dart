@@ -39,7 +39,7 @@ class _MyFormState extends State<Inscription> {
           headers: {
             "Access-Control-Allow-Origin": "*",
             'Content-Type': 'application/json',
-            'Accept': '*/*'
+            'Accept': '*/*',
           }
         );
 

@@ -221,7 +221,6 @@ class UserController extends Controller {
     }
     
     public function getRole($requestBody) {
-        $data = json_decode($requestBody, true);
         $token = getallheaders()['Authorization'] ?? null;
 
         if ($token) {
@@ -231,7 +230,6 @@ class UserController extends Controller {
             $cmd->execute();
 
             $row = $cmd->fetch(PDO::FETCH_ASSOC);
-
             if (empty($row)) {
                 echo json_encode(["error" => true, "message" => "Token invalide"]);
             } else {
